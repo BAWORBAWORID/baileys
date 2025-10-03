@@ -52,8 +52,8 @@ const { default: makeWASocket } = require("@JackPro-12/Jack-baileys")
     - [Receive Notifications in Whatsapp App](#receive-notifications-in-whatsapp-app)
 
 - [Save Auth Info](#saving--restoring-sessions)
-    - [Multi Session](#saving-multi-session)
-    - [Single Session](#saving-single-session)
+    - [Auth Multi Session](#auth-multi-sessions)
+    - [Auth Single Session](#auth-single-sessions)
 
 - [Handling Events](#handling-events)
     - [Example to Start](#example-to-start)
@@ -266,6 +266,7 @@ const sock = makeWASocket({
     ```
 ## Saving & Restoring Sessions
 
+## Auth Multi Sessions
 You obviously don't want to keep scanning the QR code every time you want to connect.
 
 So, you can load the credentials to log back in:
@@ -273,7 +274,7 @@ So, you can load the credentials to log back in:
 const makeWASocket = require("@JackPro-12/Jack-baileys").default;
 const { useMultiFileAuthState } = require("@JackPro-12/Jack-baileys");
 
-const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
+const { state, saveCreds } = await useMultiFileAuthState(`auth_info_baileys`)
 
 // will use the given state to connect
 // so if valid credentials are available -- it'll connect without QR
@@ -288,6 +289,24 @@ sock.ev.on('creds.update', saveCreds)
 
 > [!NOTE]
 > When a message is received/sent, due to signal sessions needing updating, the auth keys (`authState.keys`) will update. Whenever that happens, you must save the updated keys (`authState.keys.set()` is called). Not doing so will prevent your messages from reaching the recipient & cause other unexpected consequences. The `useMultiFileAuthState` function automatically takes care of that, but for any other serious implementation -- you will need to be very careful with the key state management.
+
+## Auth Single Sessions
+You obviously don't want to keep scanning the QR code every time you want to connect.
+
+So, you can load the credentials to log back in:
+```javascript
+const makeWASocket = require("@JackPro-12/Jack-baileys").default;
+const { useSingleFileAuthState } = require("@JackPro-12/Jack-baileys");
+
+const { state, saveCreds } = await useSingleFileAuthState(`session/creds.json`);
+
+// will use the given state to connect
+// so if valid credentials are available -- it'll connect without QR
+const sock = makeWASocket({ auth: state })
+
+// this will be called as soon as the credentials are updated
+sock.ev.on('creds.update', saveCreds)
+```
 
 ## Handling Events
 
