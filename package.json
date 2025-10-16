@@ -1,5 +1,5 @@
 {
-    "name": "Baileys",
+    "name": "WaBaileys",
     "version": "7.0.3",
     "description": "WhatsApp Api",
     "keywords": [
@@ -16,6 +16,7 @@
     "license": "MIT",
     "author": "Adhiraj Singh",
     "main": "lib/index.js",
+    "types": "lib/index.d.ts",
     "files": [
         "lib/*",
         "WAProto/*.js",
@@ -54,7 +55,8 @@
         "figlet": "^1.8.0", 
         "protobufjs": "^7.2.4",
         "uuid": "^9.0.0",
-        "ws": "^8.13.0"
+        "ws": "^8.13.0", 
+        "chalk-animation": "^2.0.3"
     },
     "devDependencies": {
         "@adiwajshing/eslint-config": "github:adiwajshing/eslint-config",
