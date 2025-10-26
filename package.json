@@ -1,17 +1,19 @@
 {
-    "name": "WaBaileys",
-    "version": "7.0.3",
-    "description": "WhatsApp Api",
+    "name": "@ilysm/baileys",
+    "version": "2.0.3",
+    "description": "WhatsApp API Customization",
     "keywords": [
-      "WhatsApp-Api",
-      "WhatsApp-Bot",
-      "APIs",
-      "Baileys",
-      "7eppeli"
+        "whatsapp",
+        "baileys",
+        "whatsapp-web",
+        "whatsapp-chat",
+        "whatsapp-group",
+        "botwa",
+        "snith"
     ],
-    "homepage": "https://github.com/BAWORBAWORID/baileys",
+    "homepage": "https://www.npmjs.com/package/@stvnnvs/baileys",
     "repository": {
-        "url": "https://github.com/BAWORBAWORID/baileys"
+        "url": "https://www.npmjs.com/package/@stvnnvs/baileys"
     },
     "license": "MIT",
     "author": "Adhiraj Singh",
@@ -48,15 +50,13 @@
         "futoin-hkdf": "^1.5.1",
         "libphonenumber-js": "^1.10.20",
         "lodash": "^4.17.21",
-        "libsignal": "github:tenka-san/libsignal-node",
+        "libsignal": "npm:@shennmine/libsignal-node",
         "music-metadata": "^7.12.3",
         "node-cache": "^5.1.2",
         "pino": "^7.0.0",
-        "figlet": "^1.8.0", 
         "protobufjs": "^7.2.4",
         "uuid": "^9.0.0",
-        "ws": "^8.13.0", 
-        "chalk-animation": "^2.0.3"
+        "ws": "^8.13.0"
     },
     "devDependencies": {
         "@adiwajshing/eslint-config": "github:adiwajshing/eslint-config",
