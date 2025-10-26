@@ -1,5 +1,5 @@
 {
-    "name": "@ilysm/baileys",
+    "name": "@Alwayscodex/baileys",
     "version": "2.0.3",
     "description": "WhatsApp API Customization",
     "keywords": [
@@ -11,9 +11,9 @@
         "botwa",
         "snith"
     ],
-    "homepage": "https://www.npmjs.com/package/@stvnnvs/baileys",
+    "homepage": "",
     "repository": {
-        "url": "https://www.npmjs.com/package/@stvnnvs/baileys"
+        "url": ""
     },
     "license": "MIT",
     "author": "Adhiraj Singh",
