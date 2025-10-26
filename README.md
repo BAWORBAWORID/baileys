@@ -2,7 +2,7 @@
 
 <div align='center'>
 
-![WhatsApp Web API](https://raw.githubusercontent.com/BAWORBAWORID/baileys/refs/heads/master/images/image.png)
+![WhatsApp Web API](https://raw.githubusercontent.com/BAWORBAWORID/baileys/refs/heads/master/images/profile.jpg)
 
 </div>
 
