@@ -8,7 +8,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@BAWORBAWORID/baileys.svg)](https://www.npmjs.com/package/@BAWORBAWORID/baileys)
 [![npm downloads](https://img.shields.io/npm/dm/@BAWORBAWORID/baileys.svg)](https://www.npmjs.com/package/@BAWORBAWORID/baileys)
-[![license](https://img.shields.io/npm/l/@BAWORBAWORID/baileys.svg)](https://raw.githubusercontent.com/BAWORBAWORID/baileys/refs/heads/master/LICENSE)
+[![license](https://img.shields.io/npm/l/@BAWORBAWORID/baileys.svg)](./LICENSE)
 
 **@BAWORBAWORID/baileys** is a fast, stable, and modern interactive-feature-focused WhatsApp Web API library built on WebSocket.
 
