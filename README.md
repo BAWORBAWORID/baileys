@@ -6,19 +6,13 @@
 
 </div>
 
-[![GitHub stars](https://img.shields.io/github/stars/BAWORBAWORID/baileys)](https://github.com/BAWORBAWORID/baileys/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/BAWORBAWORID/baileys)](https://github.com/BAWORBAWORID/baileys/network)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/BAWORBAWORID/baileys/master/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@BAWORBAWORID/baileys.svg)](https://www.npmjs.com/package/@BAWORBAWORID/baileys)
+[![npm downloads](https://img.shields.io/npm/dm/@BAWORBAWORID/baileys.svg)](https://www.npmjs.com/package/@BAWORBAWORID/baileys)
+[![license](https://img.shields.io/npm/l/@BAWORBAWORID/baileys.svg)](./LICENSE)
 
 **@BAWORBAWORID/baileys** is a fast, stable, and modern interactive-feature-focused WhatsApp Web API library built on WebSocket.
 
 > This project is not affiliated with WhatsApp. Use it responsibly.
-
-## License
-
-This project is licensed under the [MIT License](https://raw.githubusercontent.com/BAWORBAWORID/baileys/master/LICENSE).
-
-Copyright (c) 2026 BAWORBAWORID
 
 ## Install
 
