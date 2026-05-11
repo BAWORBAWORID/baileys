@@ -831,16 +831,128 @@ await sock.sendMessage(jid, {
 })
 ```
 
-#### Image with Buttons
+#### Image + Buttons (URL)
 
 ```js
+// Image from URL + quick reply buttons
 await sock.sendMessage(jid, {
   image: { url: 'https://example.com/banner.jpg' },
   caption: 'Choose an option:',
   footer: 'Yebail',
   buttons: [
-    { buttonId: 'yes', buttonText: { displayText: 'Yes' } },
-    { buttonId: 'no',  buttonText: { displayText: 'No'  } }
+    { id: 'yes', text: 'Yes' },
+    { id: 'no',  text: 'No'  }
+  ]
+})
+
+// Image from URL + mixed buttons
+await sock.sendMessage(jid, {
+  image: { url: 'https://example.com/promo.jpg' },
+  caption: 'Special promo for you!',
+  footer: 'Yebail Store',
+  buttons: [
+    { id: 'buy', text: 'Buy Now' },
+    { name: 'cta_url', displayText: 'View Details', url: 'https://example.com/product/1' },
+    { name: 'cta_copy', displayText: 'Copy Code', id: 'promo', copyCode: 'SAVE50' }
+  ]
+})
+```
+
+#### Image + Buttons (Local File)
+
+```js
+const fs = require('fs')
+
+// Image from local file path
+await sock.sendMessage(jid, {
+  image: { url: './path/to/local-image.jpg' },
+  caption: 'Choose an option:',
+  footer: 'Yebail',
+  buttons: [
+    { id: 'like', text: 'Like' },
+    { id: 'skip', text: 'Skip' }
+  ]
+})
+
+// Image from buffer
+await sock.sendMessage(jid, {
+  image: fs.readFileSync('./path/to/image.png'),
+  caption: 'Rate this image',
+  footer: 'Yebail',
+  buttons: [
+    { id: '1', text: '1 Star' },
+    { id: '2', text: '2 Stars' },
+    { id: '3', text: '3 Stars' }
+  ]
+})
+```
+
+#### Video + Buttons (URL)
+
+```js
+// Video from URL + buttons
+await sock.sendMessage(jid, {
+  video: { url: 'https://example.com/demo.mp4' },
+  caption: 'Watch our demo video!',
+  footer: 'Yebail',
+  buttons: [
+    { id: 'replay', text: 'Replay' },
+    { name: 'cta_url', displayText: 'Learn More', url: 'https://example.com/learn' },
+    { name: 'cta_call', displayText: 'Contact Us', phoneNumber: '+6281234567890' }
+  ]
+})
+```
+
+#### Video + Buttons (Local File)
+
+```js
+// Video from local file
+await sock.sendMessage(jid, {
+  video: { url: './path/to/local-video.mp4' },
+  caption: 'Check this out!',
+  footer: 'Yebail',
+  buttons: [
+    { id: 'cool', text: 'Cool!' },
+    { id: 'meh',  text: 'Meh'   }
+  ]
+})
+
+// Video from buffer
+await sock.sendMessage(jid, {
+  video: fs.readFileSync('./path/to/video.mp4'),
+  mimetype: 'video/mp4',
+  caption: 'What do you think?',
+  buttons: [
+    { id: 'thumbsup', text: 'Great' },
+    { id: 'thumbsdown', text: 'Not great' }
+  ]
+})
+```
+
+#### Document + Buttons
+
+```js
+// Document from URL
+await sock.sendMessage(jid, {
+  document: { url: 'https://example.com/file.pdf' },
+  mimetype: 'application/pdf',
+  fileName: 'invoice.pdf',
+  caption: 'Your invoice is ready',
+  footer: 'Yebail',
+  buttons: [
+    { id: 'download', text: 'Download' },
+    { name: 'cta_url', displayText: 'View Online', url: 'https://example.com/invoice/123' }
+  ]
+})
+
+// Document from local file
+await sock.sendMessage(jid, {
+  document: { url: './path/to/document.pdf' },
+  mimetype: 'application/pdf',
+  fileName: 'report.pdf',
+  caption: 'Monthly report',
+  buttons: [
+    { id: 'ok', text: 'OK' }
   ]
 })
 ```
