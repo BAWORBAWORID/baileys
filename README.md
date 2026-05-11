@@ -669,7 +669,12 @@ await sock.sendMessage(jid, {
 
 ### Buttons Message
 
+All button types below can be mixed in a single `buttons` array. The library auto-detects the type from the `name` field or falls back to `quick_reply`.
+
+#### Quick Reply Button
+
 ```js
+// shorthand — auto-detected as quick_reply
 await sock.sendMessage(jid, {
   text: 'What would you like to do?',
   footer: 'Yebail Bot',
@@ -680,17 +685,7 @@ await sock.sendMessage(jid, {
   ]
 })
 
-await sock.sendMessage(jid, {
-  image: { url: 'https://example.com/banner.jpg' },
-  caption: 'Choose an option:',
-  footer: 'Yebail',
-  buttons: [
-    { buttonId: 'yes', buttonText: { displayText: 'Yes' } },
-    { buttonId: 'no',  buttonText: { displayText: 'No'  } }
-  ]
-})
-
-// gifted-style shortcuts are also supported
+// gifted-style shortcuts
 await sock.sendMessage(jid, {
   text: 'Choose one',
   buttons: [
@@ -700,6 +695,159 @@ await sock.sendMessage(jid, {
   ]
 })
 
+// explicit name
+await sock.sendMessage(jid, {
+  text: 'Choose one',
+  buttons: [
+    { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Yes', id: 'yes' }) },
+    { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'No',  id: 'no'  }) }
+  ]
+})
+```
+
+#### CTA URL Button (Open Link)
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Visit our website!',
+  footer: 'Yebail',
+  buttons: [
+    { name: 'cta_url', displayText: 'Open Website', url: 'https://example.com' }
+  ]
+})
+
+// or with explicit buttonParamsJson
+await sock.sendMessage(jid, {
+  text: 'Visit our website!',
+  buttons: [
+    { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Open Website', url: 'https://example.com', merchant_url: 'https://example.com' }) }
+  ]
+})
+```
+
+#### CTA Call Button (Phone Call)
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Need help? Call us!',
+  footer: 'Yebail',
+  buttons: [
+    { name: 'cta_call', displayText: 'Call Now', phoneNumber: '+6281234567890' }
+  ]
+})
+```
+
+#### CTA Copy Button (Copy Code)
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Here is your promo code!',
+  footer: 'Yebail',
+  buttons: [
+    { name: 'cta_copy', displayText: 'Copy Code', id: 'copy1', copyCode: 'YEBAIL50' }
+  ]
+})
+```
+
+#### CTA Reminder Button
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Set a reminder for this event',
+  buttons: [
+    { name: 'cta_reminder', displayText: 'Remind Me', id: 'reminder1' }
+  ]
+})
+```
+
+#### CTA Cancel Reminder Button
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Cancel your reminder?',
+  buttons: [
+    { name: 'cta_cancel_reminder', displayText: 'Cancel Reminder', id: 'reminder1' }
+  ]
+})
+```
+
+#### Address Message Button
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Please share your address',
+  buttons: [
+    { name: 'address_message', displayText: 'Send Address', id: 'addr1' }
+  ]
+})
+```
+
+#### Send Location Button
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Share your current location',
+  buttons: [
+    { name: 'send_location' }
+  ]
+})
+```
+
+#### Single Select / Multi Select (List in Button)
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Choose your plan:',
+  buttons: [
+    {
+      name: 'single_select',
+      title: 'Select Plan',
+      sections: [
+        {
+          title: 'Plans',
+          rows: [
+            { title: 'Basic',   description: 'Free tier',    id: 'basic'   },
+            { title: 'Premium', description: 'Full access',  id: 'premium' }
+          ]
+        }
+      ]
+    }
+  ]
+})
+```
+
+#### Mixed Buttons (Multiple Types)
+
+```js
+await sock.sendMessage(jid, {
+  text: 'Welcome to Yebail!',
+  footer: 'Powered by Yebail',
+  buttons: [
+    { id: 'info', text: 'Get Info' },
+    { name: 'cta_url', displayText: 'Visit Website', url: 'https://example.com' },
+    { name: 'cta_call', displayText: 'Call Support', phoneNumber: '+6281234567890' },
+    { name: 'cta_copy', displayText: 'Copy Promo', id: 'promo', copyCode: 'SAVE20' }
+  ]
+})
+```
+
+#### Image with Buttons
+
+```js
+await sock.sendMessage(jid, {
+  image: { url: 'https://example.com/banner.jpg' },
+  caption: 'Choose an option:',
+  footer: 'Yebail',
+  buttons: [
+    { buttonId: 'yes', buttonText: { displayText: 'Yes' } },
+    { buttonId: 'no',  buttonText: { displayText: 'No'  } }
+  ]
+})
+```
+
+#### Legacy Buttons Message (Proto Format)
+
+```js
 await sock.sendMessage(jid, {
   buttonsMessage: {
     contentText: 'Legacy buttons message',
