@@ -78,6 +78,7 @@ const {
 - [Utility Functions](#utility-functions)
 - [Sending Messages](#sending-messages)
 - [Receiving Button Responses](#receiving-button-responses)
+- [NIXCODE Builder (Fluent API)](#nixcode-builder-fluent-api)
 - [Modify Messages](#modify-messages)
 - [Media Handling](#media-handling)
 - [Read Receipts](#read-receipts)
@@ -111,7 +112,7 @@ const {
 const { default: makeWASocket, Browsers } = require('@BAWORBAWORID/baileys')
 
 const sock = makeWASocket({
-  browser: Browsers.windows('Yebail'),
+  browser: Browsers.windows('Alwayscodex'),
   printQRInTerminal: true
 })
 ```
@@ -140,7 +141,7 @@ const sock = makeWASocket({
 
 ```js
 const sock = makeWASocket({
-  browser: Browsers.appropriate('Yebail')
+  browser: Browsers.appropriate('Alwayscodex')
 })
 ```
 
@@ -169,7 +170,7 @@ const groupCache = new NodeCache({ stdTTL: 5 * 60, useClones: false })
 
 const sock = makeWASocket({
   auth: state,
-  browser: Browsers.windows('Yebail'),
+  browser: Browsers.windows('Alwayscodex'),
   countryCode: 'US', // ISO 3166-1 alpha-2 (auto MCC fallback when mcc is not set)
   // mcc: '310', // optional explicit MCC override
   printQRInTerminal: true,
@@ -628,7 +629,7 @@ await sock.sendMessage(jid, { react: { text: '', key: msg.key } })
 await sock.sendMessage(jid, {
   title: 'Order Menu',
   text: 'Please select from the options below:',
-  footer: 'Powered by Yebail',
+  footer: 'Powered by Alwayscodex',
   buttonText: 'Open Menu',
   sections: [
     {
@@ -652,7 +653,7 @@ await sock.sendMessage(jid, {
   listMessage: {
     title: 'Order Menu',
     description: 'Please select from the options below:',
-    footerText: 'Powered by Yebail',
+    footerText: 'Powered by Alwayscodex',
     buttonText: 'Open Menu',
     listType: 1,
     sections: [
@@ -672,7 +673,7 @@ await sock.sendMessage(jid, {
 ```js
 await sock.sendMessage(jid, {
   text: 'What would you like to do?',
-  footer: 'Yebail Bot',
+  footer: 'Alwayscodex Bot',
   buttons: [
     { buttonId: 'id1', buttonText: { displayText: 'View Menu'   } },
     { buttonId: 'id2', buttonText: { displayText: 'Place Order' } },
@@ -683,7 +684,7 @@ await sock.sendMessage(jid, {
 await sock.sendMessage(jid, {
   image: { url: 'https://example.com/banner.jpg' },
   caption: 'Choose an option:',
-  footer: 'Yebail',
+  footer: 'Alwayscodex',
   buttons: [
     { buttonId: 'yes', buttonText: { displayText: 'Yes' } },
     { buttonId: 'no',  buttonText: { displayText: 'No'  } }
@@ -703,7 +704,7 @@ await sock.sendMessage(jid, {
 await sock.sendMessage(jid, {
   buttonsMessage: {
     contentText: 'Legacy buttons message',
-    footerText: 'Yebail Legacy',
+    footerText: 'Alwayscodex Legacy',
     buttons: [
       { buttonId: 'legacy_1', buttonText: { displayText: 'Legacy 1' }, type: 1 },
       { buttonId: 'legacy_2', buttonText: { displayText: 'Legacy 2' }, type: 1 }
@@ -719,8 +720,8 @@ await sock.sendMessage(jid, {
 await sock.sendMessage(jid, {
   interactiveMessage: {
     header: { title: 'Quick Question', hasMediaAttachment: false },
-    body:   { text: 'Are you enjoying yebail?' },
-    footer: { text: 'yebail' },
+    body:   { text: 'Are you enjoying alwayscodex?' },
+    footer: { text: 'alwayscodex' },
     nativeFlowMessage: {
       buttons: [
         { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Yes!',    id: 'yes'   }) },
@@ -792,7 +793,7 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: { title: 'Visit Our Website', hasMediaAttachment: false },
     body:   { text: 'Click the button below.' },
-    footer: { text: 'yebail' },
+    footer: { text: 'alwayscodex' },
     nativeFlowMessage: {
       buttons: [
         {
@@ -813,7 +814,7 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: { title: 'Your Promo Code', hasMediaAttachment: false },
     body:   { text: 'Use the promo code below for 20% off.' },
-    footer: { text: 'yebail Shop' },
+    footer: { text: 'alwayscodex Shop' },
     nativeFlowMessage: {
       buttons: [
         {
@@ -821,7 +822,7 @@ await sock.sendMessage(jid, {
           buttonParamsJson: JSON.stringify({
             display_text: 'Copy Code',
             id: 'promo_code',
-            copy_code: 'YEBAIL20'
+            copy_code: 'ALWAYSCODEX20'
           })
         }
       ],
@@ -834,7 +835,7 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: { title: 'Select a Plan', hasMediaAttachment: false },
     body:   { text: 'Choose your subscription plan:' },
-    footer: { text: 'yebail Services' },
+    footer: { text: 'alwayscodex Services' },
     nativeFlowMessage: {
       buttons: [
         {
@@ -863,7 +864,7 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: { title: 'Special Offer', hasMediaAttachment: false },
     body:   { text: 'Choose an action:' },
-    footer: { text: 'yebail Bot' },
+    footer: { text: 'alwayscodex Bot' },
     nativeFlowMessage: {
       buttons: [
         {
@@ -876,7 +877,7 @@ await sock.sendMessage(jid, {
         },
         {
           name: 'cta_copy',
-          buttonParamsJson: JSON.stringify({ display_text: 'Copy Code', id: 'code', copy_code: 'YEBAIL50' })
+          buttonParamsJson: JSON.stringify({ display_text: 'Copy Code', id: 'code', copy_code: 'ALWAYSCODEX50' })
         },
         {
           name: 'quick_reply',
@@ -896,7 +897,7 @@ await sock.sendMessage(jid, {
       imageMessage: { url: 'https://example.com/banner.jpg', mimetype: 'image/jpeg' }
     },
     body:   { text: 'Choose:' },
-    footer: { text: 'yebail' },
+    footer: { text: 'alwayscodex' },
     nativeFlowMessage: {
       buttons: [
         { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Yes', id: 'yes' }) },
@@ -911,7 +912,7 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: { title: 'Main Menu', hasMediaAttachment: false },
     body:   { text: 'Please choose a menu:' },
-    footer: { text: 'yebail' },
+    footer: { text: 'alwayscodex' },
     nativeFlowMessage: {
       buttons: [
         {
@@ -945,7 +946,7 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: 'Important Document',
     title: 'PDF File',
-    footer: 'yebail',
+    footer: 'alwayscodex',
     document: fs.readFileSync('./file.pdf'),
     mimetype: 'application/pdf',
     fileName: 'document.pdf',
@@ -956,7 +957,7 @@ await sock.sendMessage(jid, {
       isForwarded: false
     },
     externalAdReply: {
-      title: 'yebail Bot',
+      title: 'alwayscodex Bot',
       body: 'Interactive bot',
       mediaType: 3,
       thumbnailUrl: 'https://example.com/thumb.jpg',
@@ -981,20 +982,20 @@ await sock.sendMessage(jid, {
   interactiveMessage: {
     header: 'Hello World',
     title: 'Hello World',
-    footer: 'yebail',
+    footer: 'alwayscodex',
     image: { url: 'https://example.com/image.jpg' },
     nativeFlowMessage: {
       messageParamsJson: JSON.stringify({
         limited_time_offer: {
           text: 'Limited offer',
           url: 'https://github.com/BAWORBAWORID/baileys',
-          copy_code: 'YEBAIL',
+          copy_code: 'ALWAYSCODEX',
           expiration_time: Date.now() + 3600000
         },
         bottom_sheet: {
           in_thread_buttons_limit: 2,
-          list_title: 'yebail',
-          button_title: 'yebail'
+          list_title: 'alwayscodex',
+          button_title: 'alwayscodex'
         }
       }),
       buttons: [
@@ -1020,12 +1021,58 @@ await sock.sendMessage(jid, {
         },
         {
           name: 'cta_copy',
-          buttonParamsJson: JSON.stringify({ display_text: 'Copy Code', id: 'code', copy_code: 'YEBAIL' })
+          buttonParamsJson: JSON.stringify({ display_text: 'Copy Code', id: 'code', copy_code: 'ALWAYSCODEX' })
         }
       ]
     }
   }
 }, { quoted: msg })
+
+// Reminder button
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Set Reminder', hasMediaAttachment: false },
+    body:   { text: 'Reminder for the meeting' },
+    footer: { text: 'alwayscodex' },
+    nativeFlowMessage: {
+      buttons: [
+        { name: 'cta_reminder', buttonParamsJson: JSON.stringify({ display_text: 'Remind Me', id: 'reminder_1' }) },
+        { name: 'cta_cancel_reminder', buttonParamsJson: JSON.stringify({ display_text: 'Cancel Reminder', id: 'cancel_1' }) }
+      ],
+      messageParamsJson: ''
+    }
+  }
+})
+
+// Address button
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Delivery', hasMediaAttachment: false },
+    body:   { text: 'Enter your delivery address' },
+    footer: { text: 'alwayscodex' },
+    nativeFlowMessage: {
+      buttons: [
+        { name: 'address_message', buttonParamsJson: JSON.stringify({ display_text: 'Set Address', id: 'addr_1' }) }
+      ],
+      messageParamsJson: ''
+    }
+  }
+})
+
+// Location button
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Share Location', hasMediaAttachment: false },
+    body:   { text: 'Send your current location' },
+    footer: { text: 'alwayscodex' },
+    nativeFlowMessage: {
+      buttons: [
+        { name: 'send_location', buttonParamsJson: '' }
+      ],
+      messageParamsJson: ''
+    }
+  }
+})
 ```
 
 ### Carousel Message
@@ -1185,6 +1232,358 @@ await sock.sendMessage(jid, {
 })
 ```
 
+### NIXCODE Builder (Fluent API)
+
+Baileys includes the **NIXCODE** fluent builder for creating interactive messages with a chainable API. Import the builders from the main package:
+
+```js
+const { Button, ButtonV2, Carousel, AIRich } = require('@BAWORBAWORID/baileys')
+```
+
+#### Button Builder
+
+Creates native flow interactive messages (quick replies, URLs, calls, selections, etc):
+
+```js
+// Quick reply buttons
+const btn = new Button(sock)
+  .setTitle('Quick Question')
+  .setBody('Are you enjoying Alwayscodex?')
+  .setFooter('alwayscodex')
+  .addReply('Yes!', 'yes')
+  .addReply('Not yet', 'no')
+await btn.send(jid)
+
+// URL button
+const urlBtn = new Button(sock)
+  .setTitle('Visit Our Website')
+  .setBody('Click the button below.')
+  .setFooter('alwayscodex')
+  .addUrl('Open Website', 'https://github.com/BAWORBAWORID/baileys')
+await urlBtn.send(jid)
+
+// Copy code button
+const copyBtn = new Button(sock)
+  .setTitle('Get Discount')
+  .setBody('Use this code for 50% off')
+  .setFooter('alwayscodex Services')
+  .addCopy('Copy Code', 'ALWAYSCODEX50')
+await copyBtn.send(jid)
+
+// Call button
+const callBtn = new Button(sock)
+  .setBody('Need help? Call us')
+  .addCall('Call Now', 'call_1')
+await callBtn.send(jid)
+
+// Single select (dropdown) with sections and rows
+const selectBtn = new Button(sock)
+  .setBody('Choose your plan')
+  .setFooter('alwayscodex')
+  .addSelection('Available Plans')
+  .makeSections('Plans')
+  .makeRow('Free', 'Free Plan', 'Basic features', 'free')
+  .makeRow('Basic', 'Basic - $5', 'More features', 'basic')
+  .makeSections('Pro Plans')
+  .makeRow('Pro', 'Pro - $15', 'All features', 'pro')
+await selectBtn.send(jid)
+
+// Button with image header
+const imgBtn = new Button(sock)
+  .setTitle('Product Showcase')
+  .setBody('Check out our latest product')
+  .setFooter('alwayscodex Shop')
+  .setImage('https://example.com/product.jpg')
+  .addReply('Buy Now', 'buy_1')
+  .addReply('Learn More', 'info_1')
+await imgBtn.send(jid)
+
+// Video header
+const vidBtn = new Button(sock)
+  .setTitle('Watch Demo')
+  .setBody('See how it works')
+  .setFooter('alwayscodex')
+  .setVideo('https://example.com/demo.mp4')
+  .addReply('Got it', 'ack_1')
+await vidBtn.send(jid)
+
+// Document header
+const docBtn = new Button(sock)
+  .setTitle('Invoice #123')
+  .setBody('Your invoice is ready')
+  .setFooter('alwayscodex')
+  .setDocument('https://example.com/invoice.pdf', { mimetype: 'application/pdf', fileName: 'invoice.pdf' })
+  .addReply('Downloaded', 'dl_1')
+await docBtn.send(jid)
+
+// Reminder button
+const reminderBtn = new Button(sock)
+  .setTitle('Set Reminder')
+  .setBody('Reminder for the meeting')
+  .setFooter('alwayscodex')
+  .addReminder('Remind Me', 'reminder_1')
+  .addCancelReminder('Cancel Reminder', 'cancel_1')
+await reminderBtn.send(jid)
+
+// Address button
+const addrBtn = new Button(sock)
+  .setTitle('Delivery')
+  .setBody('Enter your delivery address')
+  .addAddress('Set Address', 'addr_1')
+await addrBtn.send(jid)
+
+// Location button
+const locBtn = new Button(sock)
+  .setTitle('Share Location')
+  .setBody('Send your current location')
+  .addLocation()
+await locBtn.send(jid)
+
+// Mixed button types in one message
+const mixedBtn = new Button(sock)
+  .setTitle('Special Offer')
+  .setBody('Choose an action:')
+  .setFooter('alwayscodex')
+  .addUrl('Visit Website', 'https://github.com/BAWORBAWORID/baileys')
+  .addCopy('Copy Code', 'ALWAYSCODEX50')
+  .addReply('Continue', 'continue')
+await mixedBtn.send(jid)
+
+// Subtitle + context info
+const ctxBtn = new Button(sock)
+  .setTitle('With Context')
+  .setSubtitle('Subtitle text')
+  .setBody('Message with context info')
+  .setFooter('alwayscodex')
+  .setContextInfo({ forwardingScore: 1, isForwarded: true })
+  .addReply('OK', 'ok_1')
+await ctxBtn.send(jid)
+
+// Custom native flow params
+const paramBtn = new Button(sock)
+  .setTitle('Limited Offer')
+  .setBody('Use code ALWAYSCODEX')
+  .setFooter('alwayscodex')
+  .setParams({
+    limited_time_offer: {
+      text: 'Limited offer',
+      url: 'https://github.com/BAWORBAWORID/baileys',
+      copy_code: 'ALWAYSCODEX',
+      expiration_time: Date.now() + 3600000
+    }
+  })
+  .addCopy('Copy Code', 'ALWAYSCODEX')
+await paramBtn.send(jid)
+
+// Raw native flow button
+const rawBtn = new Button(sock)
+  .setBody('Custom button')
+  .addButton('call_permission_request', { has_multiple_buttons: true })
+await rawBtn.send(jid)
+
+// toCard() - get card object without sending (use with Carousel)
+const card = await new Button(sock)
+  .setTitle('Card Title')
+  .setBody('Card body')
+  .setFooter('Rp 50.000')
+  .addReply('Select', 'sel_1')
+  .toCard()
+```
+
+#### ButtonV2 Builder (Legacy)
+
+Creates legacy buttons with thumbnail:
+
+```js
+// Basic legacy buttons
+const btnV2 = new ButtonV2(sock)
+  .setBody('Choose an action')
+  .setFooter('Alwayscodex Legacy')
+  .setThumbnail('https://example.com/thumb.jpg')
+  .addButton('View Menu', 'menu')
+  .addButton('Place Order', 'order')
+await btnV2.send(jid)
+
+// Raw button object
+const rawBtnV2 = new ButtonV2(sock)
+  .setBody('Choose')
+  .addRawButton({ buttonId: 'id1', buttonText: { displayText: 'Custom' }, type: 1 })
+await rawBtnV2.send(jid)
+
+// With context info
+const ctxBtnV2 = new ButtonV2(sock)
+  .setBody('Forwarded buttons')
+  .setFooter('alwayscodex')
+  .setContextInfo({ forwardingScore: 1, isForwarded: true })
+  .addButton('Yes', 'yes')
+  .addButton('No', 'no')
+await ctxBtnV2.send(jid)
+
+// Media header (image/video/audio/document)
+const mediaBtnV2 = new ButtonV2(sock)
+  .setBody('With image')
+  .setMedia({ image: { url: 'https://example.com/img.jpg' } })
+  .addButton('Click', 'click_1')
+await mediaBtnV2.send(jid)
+```
+
+#### Carousel Builder
+
+Creates card carousel messages (swipe to browse):
+
+```js
+// Basic carousel with image cards
+const card1 = await new Button(sock)
+  .setTitle('Product 1')
+  .setBody('Best seller item')
+  .setFooter('Rp 99.000')
+  .setImage('https://example.com/product1.jpg')
+  .addReply('Buy Now', 'buy_1')
+  .toCard()
+
+const card2 = await new Button(sock)
+  .setTitle('Product 2')
+  .setBody('New arrival')
+  .setFooter('Rp 149.000')
+  .setImage('https://example.com/product2.jpg')
+  .addReply('Buy Now', 'buy_2')
+  .toCard()
+
+const carousel = new Carousel(sock)
+  .setBody('Browse our products:')
+  .setFooter('Swipe to see more')
+  .addCard([card1, card2])
+await carousel.send(jid)
+
+// Carousel with video cards
+const vidCard = await new Button(sock)
+  .setTitle('Product Demo')
+  .setBody('Watch the video')
+  .setVideo('https://example.com/demo.mp4')
+  .addReply('Like', 'like_1')
+  .toCard()
+
+const imgCard = await new Button(sock)
+  .setTitle('Gallery')
+  .setBody('See photos')
+  .setImage('https://example.com/photo.jpg')
+  .addReply('View', 'view_1')
+  .toCard()
+
+const mixedCarousel = new Carousel(sock)
+  .setBody('Browse our content')
+  .setFooter('Swipe to explore')
+  .addCard([vidCard, imgCard])
+await mixedCarousel.send(jid)
+
+// Carousel with multiple button types per card
+const multiBtnCard = await new Button(sock)
+  .setTitle('Visit Us')
+  .setBody('Check out our page')
+  .setFooter('alwayscodex')
+  .setImage('https://example.com/banner.jpg')
+  .addUrl('Website', 'https://github.com/BAWORBAWORID/baileys')
+  .addReply('Contact', 'contact_1')
+  .toCard()
+
+const carousel2 = new Carousel(sock)
+  .setBody('Explore:')
+  .addCard(multiBtnCard)
+await carousel2.send(jid)
+
+// Build without sending (manual relay)
+const built = carousel.build(jid)
+await sock.relayMessage(jid, built.message, { messageId: built.key.id })
+```
+
+#### AIRich Builder
+
+Creates AI rich response messages with text, code, tables, images, reels, and source citations:
+
+```js
+// Text with hyperlinks
+const rich = new AIRich(sock)
+  .addText('Here is a [search result](https://example.com) for you.')
+  .addText('And another [link](https://github.com) with details.')
+await rich.send(jid)
+
+// Code block with syntax highlighting
+const codeRich = new AIRich(sock)
+  .addText('Here is some code:')
+  .addCode('javascript', 'function hello() {\n  console.log("Hello!")\n}')
+await codeRich.send(jid)
+
+// Table
+const tableRich = new AIRich(sock)
+  .addText('Comparison table:')
+  .addTable([
+    ['Feature', 'Free', 'Pro'],
+    ['Storage', '5GB', '100GB'],
+    ['Support', 'Email', 'Priority']
+  ])
+await tableRich.send(jid)
+
+// Image (single or multiple)
+const imgRich = new AIRich(sock)
+  .addText('Check this image:')
+  .addImage('https://example.com/photo.jpg')
+await imgRich.send(jid)
+
+// Multiple images
+const multiImgRich = new AIRich(sock)
+  .addText('Gallery:')
+  .addImage([
+    'https://example.com/photo1.jpg',
+    'https://example.com/photo2.jpg',
+    'https://example.com/photo3.jpg'
+  ])
+await multiImgRich.send(jid)
+
+// Source citations
+const srcRich = new AIRich(sock)
+  .addText('According to [Google](https://google.com), the answer is 42.')
+  .addSource([
+    ['https://google.com/favicon.ico', 'https://google.com', 'Google Search']
+  ])
+await srcRich.send(jid)
+
+// Reels (video thumbnails)
+const reelsRich = new AIRich(sock)
+  .addText('Check out these reels:')
+  .addReels([
+    {
+      title: 'Demo Reel',
+      profileIconUrl: 'https://example.com/avatar.jpg',
+      thumbnailUrl: 'https://example.com/thumb.jpg',
+      videoUrl: 'https://example.com/video.mp4',
+      reels_title: 'Product Demo',
+      is_verified: true
+    }
+  ])
+await reelsRich.send(jid)
+
+// Mixed content (text + code + table + image + source)
+const mixedRich = new AIRich(sock)
+  .addText('Here is a [full report](https://example.com):')
+  .addCode('python', 'print("Hello World")')
+  .addTable([['Metric', 'Value'], ['Users', '1,234'], ['Revenue', '$5,678']])
+  .addImage('https://example.com/chart.jpg')
+  .addSource([
+    ['https://example.com/favicon.ico', 'https://example.com/report', 'Full Report']
+  ])
+await mixedRich.send(jid)
+
+// Build without sending (get raw payload)
+const payload = rich.build()
+console.log(payload.botForwardedMessage) // raw message object
+
+// Build without forwarding (no "forwarded" badge)
+const noFwd = rich.build({ forwarded: false })
+
+// Build without encoded unifiedResponse
+const noEncode = rich.build({ includesUnifiedResponse: false })
+```
+
 ### External Ad Reply (all message types)
 
 ```js
@@ -1232,7 +1631,7 @@ await sock.sendMessage(jid, {
     text: 'Built from raw proto',
     contextInfo: {
       externalAdReply: {
-        title: 'yebail',
+        title: 'alwayscodex',
         jpegThumbnail: fs.readFileSync('./thumb.jpg'),
         sourceApp: 'whatsapp',
         showAdAttribution: true,
@@ -1415,7 +1814,7 @@ await sock.sendMessage(jid, {
 await sock.sendMessage(jid, {
   title: 'Catalog',
   text: 'Choose a product',
-  footer: 'Yebail Shop',
+  footer: 'Alwayscodex Shop',
   buttonText: 'View Products',
   businessOwnerJid: '628111111111@s.whatsapp.net',
   productList: [
@@ -1435,7 +1834,7 @@ await sock.sendMessage(jid, {
 ```js
 await sock.sendMessage(jid, {
   text: 'Open storefront',
-  footer: 'Yebail Store',
+  footer: 'Alwayscodex Store',
   shop: {
     id: '628111111111@s.whatsapp.net',
     surface: 1
@@ -1448,7 +1847,7 @@ await sock.sendMessage(jid, {
 ```js
 await sock.sendMessage(jid, {
   text: 'Choose action',
-  footer: 'Yebail',
+  footer: 'Alwayscodex',
   templateButtons: [
     { index: 1, quickReplyButton: { displayText: 'Ping', id: 'ping' } },
     { index: 2, urlButton: { displayText: 'Website', url: 'https://github.com/BAWORBAWORID/baileys' } }
@@ -1461,7 +1860,7 @@ await sock.sendMessage(jid, {
 ```js
 await sock.sendMessage(jid, {
   text: 'Quick options',
-  footer: 'Yebail',
+  footer: 'Alwayscodex',
   interactiveButtons: [
     { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Option A', id: 'opt_a' }) },
     { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Option B', id: 'opt_b' }) }
@@ -1491,7 +1890,7 @@ await sock.sendMessage(jid, {
     inviteExpiration: Math.floor(Date.now() / 1000) + 86400,
     text: 'Join our group',
     jid: '1203630xxxxxxxx@g.us',
-    subject: 'Yebail Community'
+    subject: 'Alwayscodex Community'
   }
 })
 ```
@@ -1504,7 +1903,7 @@ await sock.sendMessage(jid, {
     inviteExpiration: Math.floor(Date.now() / 1000) + 86400,
     text: 'Please become admin',
     jid: '1203630xxxxxxxx@newsletter',
-    subject: 'Yebail Channel',
+    subject: 'Alwayscodex Channel',
     thumbnail: fs.readFileSync('./thumb.jpg')
   }
 })
@@ -1515,6 +1914,16 @@ await sock.sendMessage(jid, {
 ```js
 await sock.sendMessage(jid, { requestPhoneNumber: true })
 await sock.sendMessage(jid, { sharePhoneNumber: true })
+```
+
+### Limit Sharing
+
+```js
+// Enable sharing limit
+await sock.sendMessage(jid, { limitSharing: true })
+
+// Disable sharing limit
+await sock.sendMessage(jid, { limitSharing: false })
 ```
 
 ### Scheduled Call Message
@@ -1876,7 +2285,7 @@ console.log(ids2.phoneNumber, ids2.lid)
 ```js
 const fs = require('fs')
 
-await sock.updateProfileName('Yebail Bot')
+await sock.updateProfileName('Alwayscodex Bot')
 await sock.updateProfileStatus('Running on @BAWORBAWORID/baileys')
 await sock.updateProfilePicture(sock.authState.creds.me.id, fs.readFileSync('./avatar.jpg'))
 await sock.updateProfilePicture(groupJid, fs.readFileSync('./group-icon.jpg'))
@@ -2325,7 +2734,7 @@ yarn build:types
 The current WhatsApp Web version is stored alongside the connection defaults in:
 
 ```
-lib/Defaults/yebail-version.json
+lib/Defaults/alwayscodex-version.json
 ```
 
 Format: `{"version":[2,3000,XXXXXXXXX]}`. Updated automatically by `yarn update:version` and `yarn update:proto` (which writes the version extracted from WA Web back into this file). The version array is also exported from the library as `version` and embedded as a `/// WhatsApp Version:` comment in each `.proto` file.
@@ -2334,7 +2743,7 @@ Format: `{"version":[2,3000,XXXXXXXXX]}`. Updated automatically by `yarn update:
 
 The GitHub Actions **Auto Update** workflow runs every Sunday (`0 0 * * 0`) and:
 
-1. Runs `yarn update:version` — fetches the latest WA Web version, updates `lib/Defaults/yebail-version.json` and `lib/Defaults/index.js`
+1. Runs `yarn update:version` — fetches the latest WA Web version, updates `lib/Defaults/alwayscodex-version.json` and `lib/Defaults/index.js`
 2. Runs `yarn update:proto` — re-extracts the proto schema from WA Web, regenerates `WAProto/index.js`, syncs all per-module `.js`/`.d.ts`/`.proto` files, runs `yarn build:types`
 3. Bumps the npm patch version, commits all changes, pushes to `main`, and publishes to npm
 
@@ -2374,7 +2783,7 @@ sock.ws.on('CB:call', (node) => console.log('Call node:', node))
 
 ## Maintenance Mode
 
-Yebail includes a built-in **maintenance mode** feature. When enabled, each `makeWASocket()` call immediately shows a maintenance message and stops the process — useful when you need to apply updates or fixes without creating a new WhatsApp connection.
+Alwayscodex includes a built-in **maintenance mode** feature. When enabled, each `makeWASocket()` call immediately shows a maintenance message and stops the process — useful when you need to apply updates or fixes without creating a new WhatsApp connection.
 
 ### Enable / Disable via npm scripts
 
@@ -2393,7 +2802,7 @@ const { MAINTENANCE_MODE, MAINTENANCE_MESSAGE } = require('@BAWORBAWORID/baileys
 
 // Check status
 console.log('Maintenance active?', MAINTENANCE_MODE)
-// Default message: '[YEBAIL] Maintenance mode is currently active. ...'
+// Default message: '[ALWAYSCODEX] Maintenance mode is currently active. ...'
 console.log(MAINTENANCE_MESSAGE)
 ```
 
@@ -2440,7 +2849,7 @@ console.log(MAINTENANCE_MESSAGE)
 | Encryption | yes | Signal protocol *(vendored internal libsignal-node in `lib/Signal/libsignal-node`)* |
 | Auto-Updates | yes | `yarn update:all` / weekly CI schedule → auto-publishes to npm |
 | WAProto per-module sync | yes | `yarn sync:proto` re-generates all per-module wrappers from bundle |
-| WAProto version tracking | yes | `lib/Defaults/yebail-version.json` stores current WA Web version |
+| WAProto version tracking | yes | `lib/Defaults/alwayscodex-version.json` stores current WA Web version |
 | statusNotificationMessage | yes | status add-yours / reshare notification |
 | statusQuestionAnswerMessage | yes | answer to a status question |
 | questionResponseMessage | yes | response to a question message |
