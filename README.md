@@ -78,7 +78,7 @@ const {
 - [Utility Functions](#utility-functions)
 - [Sending Messages](#sending-messages)
 - [Receiving Button Responses](#receiving-button-responses)
-- [NIXCODE Builder (Fluent API)](#nixcode-builder-fluent-api)
+- [Kirim Button & Interactive Langsung dengan sendMessage](#kirim-button--interactive-langsung-dengan-sendmessage)
 - [Modify Messages](#modify-messages)
 - [Media Handling](#media-handling)
 - [Read Receipts](#read-receipts)
@@ -1232,357 +1232,150 @@ await sock.sendMessage(jid, {
 })
 ```
 
-### NIXCODE Builder (Fluent API)
+### Kirim Button & Interactive Langsung dengan sendMessage
 
-Baileys includes the **NIXCODE** fluent builder for creating interactive messages with a chainable API. Import the builders from the main package:
+Semua jenis button/interactive bisa dikirim langsung pakai `sock.sendMessage()` tanpa builder. Lihat contoh lengkap di bagian:
+
+- **Buttons Message** → [lihat di atas](#buttons-message)
+- **Interactive Message (native flow)** → [lihat di atas](#interactive-message)
+- **List Message** → [lihat di atas](#list-message)
+- **Carousel Message** → [lihat di atas](#carousel-message)
+
+#### Contoh Cepat:
 
 ```js
-const { Button, ButtonV2, Carousel, AIRich } = require('@BAWORBAWORID/baileys')
-```
+// Buttons biasa
+await sock.sendMessage(jid, {
+  text: 'What would you like to do?',
+  footer: 'Alwayscodex Bot',
+  buttons: [
+    { buttonId: 'id1', buttonText: { displayText: 'View Menu' } },
+    { buttonId: 'id2', buttonText: { displayText: 'Place Order' } },
+  ]
+})
 
-#### Button Builder
-
-Creates native flow interactive messages (quick replies, URLs, calls, selections, etc):
-
-```js
-// Quick reply buttons
-const btn = new Button(sock)
-  .setTitle('Quick Question')
-  .setBody('Are you enjoying Alwayscodex?')
-  .setFooter('alwayscodex')
-  .addReply('Yes!', 'yes')
-  .addReply('Not yet', 'no')
-await btn.send(jid)
-
-// URL button
-const urlBtn = new Button(sock)
-  .setTitle('Visit Our Website')
-  .setBody('Click the button below.')
-  .setFooter('alwayscodex')
-  .addUrl('Open Website', 'https://github.com/BAWORBAWORID/baileys')
-await urlBtn.send(jid)
-
-// Copy code button
-const copyBtn = new Button(sock)
-  .setTitle('Get Discount')
-  .setBody('Use this code for 50% off')
-  .setFooter('alwayscodex Services')
-  .addCopy('Copy Code', 'ALWAYSCODEX50')
-await copyBtn.send(jid)
-
-// Call button
-const callBtn = new Button(sock)
-  .setBody('Need help? Call us')
-  .addCall('Call Now', 'call_1')
-await callBtn.send(jid)
-
-// Single select (dropdown) with sections and rows
-const selectBtn = new Button(sock)
-  .setBody('Choose your plan')
-  .setFooter('alwayscodex')
-  .addSelection('Available Plans')
-  .makeSections('Plans')
-  .makeRow('Free', 'Free Plan', 'Basic features', 'free')
-  .makeRow('Basic', 'Basic - $5', 'More features', 'basic')
-  .makeSections('Pro Plans')
-  .makeRow('Pro', 'Pro - $15', 'All features', 'pro')
-await selectBtn.send(jid)
-
-// Button with image header
-const imgBtn = new Button(sock)
-  .setTitle('Product Showcase')
-  .setBody('Check out our latest product')
-  .setFooter('alwayscodex Shop')
-  .setImage('https://example.com/product.jpg')
-  .addReply('Buy Now', 'buy_1')
-  .addReply('Learn More', 'info_1')
-await imgBtn.send(jid)
-
-// Video header
-const vidBtn = new Button(sock)
-  .setTitle('Watch Demo')
-  .setBody('See how it works')
-  .setFooter('alwayscodex')
-  .setVideo('https://example.com/demo.mp4')
-  .addReply('Got it', 'ack_1')
-await vidBtn.send(jid)
-
-// Document header
-const docBtn = new Button(sock)
-  .setTitle('Invoice #123')
-  .setBody('Your invoice is ready')
-  .setFooter('alwayscodex')
-  .setDocument('https://example.com/invoice.pdf', { mimetype: 'application/pdf', fileName: 'invoice.pdf' })
-  .addReply('Downloaded', 'dl_1')
-await docBtn.send(jid)
-
-// Reminder button
-const reminderBtn = new Button(sock)
-  .setTitle('Set Reminder')
-  .setBody('Reminder for the meeting')
-  .setFooter('alwayscodex')
-  .addReminder('Remind Me', 'reminder_1')
-  .addCancelReminder('Cancel Reminder', 'cancel_1')
-await reminderBtn.send(jid)
-
-// Address button
-const addrBtn = new Button(sock)
-  .setTitle('Delivery')
-  .setBody('Enter your delivery address')
-  .addAddress('Set Address', 'addr_1')
-await addrBtn.send(jid)
-
-// Location button
-const locBtn = new Button(sock)
-  .setTitle('Share Location')
-  .setBody('Send your current location')
-  .addLocation()
-await locBtn.send(jid)
-
-// Mixed button types in one message
-const mixedBtn = new Button(sock)
-  .setTitle('Special Offer')
-  .setBody('Choose an action:')
-  .setFooter('alwayscodex')
-  .addUrl('Visit Website', 'https://github.com/BAWORBAWORID/baileys')
-  .addCopy('Copy Code', 'ALWAYSCODEX50')
-  .addReply('Continue', 'continue')
-await mixedBtn.send(jid)
-
-// Subtitle + context info
-const ctxBtn = new Button(sock)
-  .setTitle('With Context')
-  .setSubtitle('Subtitle text')
-  .setBody('Message with context info')
-  .setFooter('alwayscodex')
-  .setContextInfo({ forwardingScore: 1, isForwarded: true })
-  .addReply('OK', 'ok_1')
-await ctxBtn.send(jid)
-
-// Custom native flow params
-const paramBtn = new Button(sock)
-  .setTitle('Limited Offer')
-  .setBody('Use code ALWAYSCODEX')
-  .setFooter('alwayscodex')
-  .setParams({
-    limited_time_offer: {
-      text: 'Limited offer',
-      url: 'https://github.com/BAWORBAWORID/baileys',
-      copy_code: 'ALWAYSCODEX',
-      expiration_time: Date.now() + 3600000
+// Interactive native flow (quick reply)
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Quick Question', hasMediaAttachment: false },
+    body: { text: 'Are you enjoying Alwayscodex?' },
+    footer: { text: 'alwayscodex' },
+    nativeFlowMessage: {
+      buttons: [
+        { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Yes!', id: 'yes' }) },
+        { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Not yet', id: 'no' }) },
+      ],
+      messageParamsJson: ''
     }
-  })
-  .addCopy('Copy Code', 'ALWAYSCODEX')
-await paramBtn.send(jid)
+  }
+})
 
-// Raw native flow button
-const rawBtn = new Button(sock)
-  .setBody('Custom button')
-  .addButton('call_permission_request', { has_multiple_buttons: true })
-await rawBtn.send(jid)
-
-// toCard() - get card object without sending (use with Carousel)
-const card = await new Button(sock)
-  .setTitle('Card Title')
-  .setBody('Card body')
-  .setFooter('Rp 50.000')
-  .addReply('Select', 'sel_1')
-  .toCard()
-```
-
-#### ButtonV2 Builder (Legacy)
-
-Creates legacy buttons with thumbnail:
-
-```js
-// Basic legacy buttons
-const btnV2 = new ButtonV2(sock)
-  .setBody('Choose an action')
-  .setFooter('Alwayscodex Legacy')
-  .setThumbnail('https://example.com/thumb.jpg')
-  .addButton('View Menu', 'menu')
-  .addButton('Place Order', 'order')
-await btnV2.send(jid)
-
-// Raw button object
-const rawBtnV2 = new ButtonV2(sock)
-  .setBody('Choose')
-  .addRawButton({ buttonId: 'id1', buttonText: { displayText: 'Custom' }, type: 1 })
-await rawBtnV2.send(jid)
-
-// With context info
-const ctxBtnV2 = new ButtonV2(sock)
-  .setBody('Forwarded buttons')
-  .setFooter('alwayscodex')
-  .setContextInfo({ forwardingScore: 1, isForwarded: true })
-  .addButton('Yes', 'yes')
-  .addButton('No', 'no')
-await ctxBtnV2.send(jid)
-
-// Media header (image/video/audio/document)
-const mediaBtnV2 = new ButtonV2(sock)
-  .setBody('With image')
-  .setMedia({ image: { url: 'https://example.com/img.jpg' } })
-  .addButton('Click', 'click_1')
-await mediaBtnV2.send(jid)
-```
-
-#### Carousel Builder
-
-Creates card carousel messages (swipe to browse):
-
-```js
-// Basic carousel with image cards
-const card1 = await new Button(sock)
-  .setTitle('Product 1')
-  .setBody('Best seller item')
-  .setFooter('Rp 99.000')
-  .setImage('https://example.com/product1.jpg')
-  .addReply('Buy Now', 'buy_1')
-  .toCard()
-
-const card2 = await new Button(sock)
-  .setTitle('Product 2')
-  .setBody('New arrival')
-  .setFooter('Rp 149.000')
-  .setImage('https://example.com/product2.jpg')
-  .addReply('Buy Now', 'buy_2')
-  .toCard()
-
-const carousel = new Carousel(sock)
-  .setBody('Browse our products:')
-  .setFooter('Swipe to see more')
-  .addCard([card1, card2])
-await carousel.send(jid)
-
-// Carousel with video cards
-const vidCard = await new Button(sock)
-  .setTitle('Product Demo')
-  .setBody('Watch the video')
-  .setVideo('https://example.com/demo.mp4')
-  .addReply('Like', 'like_1')
-  .toCard()
-
-const imgCard = await new Button(sock)
-  .setTitle('Gallery')
-  .setBody('See photos')
-  .setImage('https://example.com/photo.jpg')
-  .addReply('View', 'view_1')
-  .toCard()
-
-const mixedCarousel = new Carousel(sock)
-  .setBody('Browse our content')
-  .setFooter('Swipe to explore')
-  .addCard([vidCard, imgCard])
-await mixedCarousel.send(jid)
-
-// Carousel with multiple button types per card
-const multiBtnCard = await new Button(sock)
-  .setTitle('Visit Us')
-  .setBody('Check out our page')
-  .setFooter('alwayscodex')
-  .setImage('https://example.com/banner.jpg')
-  .addUrl('Website', 'https://github.com/BAWORBAWORID/baileys')
-  .addReply('Contact', 'contact_1')
-  .toCard()
-
-const carousel2 = new Carousel(sock)
-  .setBody('Explore:')
-  .addCard(multiBtnCard)
-await carousel2.send(jid)
-
-// Build without sending (manual relay)
-const built = carousel.build(jid)
-await sock.relayMessage(jid, built.message, { messageId: built.key.id })
-```
-
-#### AIRich Builder
-
-Creates AI rich response messages with text, code, tables, images, reels, and source citations:
-
-```js
-// Text with hyperlinks
-const rich = new AIRich(sock)
-  .addText('Here is a [search result](https://example.com) for you.')
-  .addText('And another [link](https://github.com) with details.')
-await rich.send(jid)
-
-// Code block with syntax highlighting
-const codeRich = new AIRich(sock)
-  .addText('Here is some code:')
-  .addCode('javascript', 'function hello() {\n  console.log("Hello!")\n}')
-await codeRich.send(jid)
-
-// Table
-const tableRich = new AIRich(sock)
-  .addText('Comparison table:')
-  .addTable([
-    ['Feature', 'Free', 'Pro'],
-    ['Storage', '5GB', '100GB'],
-    ['Support', 'Email', 'Priority']
-  ])
-await tableRich.send(jid)
-
-// Image (single or multiple)
-const imgRich = new AIRich(sock)
-  .addText('Check this image:')
-  .addImage('https://example.com/photo.jpg')
-await imgRich.send(jid)
-
-// Multiple images
-const multiImgRich = new AIRich(sock)
-  .addText('Gallery:')
-  .addImage([
-    'https://example.com/photo1.jpg',
-    'https://example.com/photo2.jpg',
-    'https://example.com/photo3.jpg'
-  ])
-await multiImgRich.send(jid)
-
-// Source citations
-const srcRich = new AIRich(sock)
-  .addText('According to [Google](https://google.com), the answer is 42.')
-  .addSource([
-    ['https://google.com/favicon.ico', 'https://google.com', 'Google Search']
-  ])
-await srcRich.send(jid)
-
-// Reels (video thumbnails)
-const reelsRich = new AIRich(sock)
-  .addText('Check out these reels:')
-  .addReels([
+// List message
+await sock.sendMessage(jid, {
+  title: 'Order Menu',
+  text: 'Please select:',
+  footer: 'Alwayscodex',
+  buttonText: 'Open Menu',
+  sections: [
     {
-      title: 'Demo Reel',
-      profileIconUrl: 'https://example.com/avatar.jpg',
-      thumbnailUrl: 'https://example.com/thumb.jpg',
-      videoUrl: 'https://example.com/video.mp4',
-      reels_title: 'Product Demo',
-      is_verified: true
+      title: 'Food',
+      rows: [
+        { title: 'Pizza', description: 'Classic', rowId: 'pizza' },
+        { title: 'Burger', description: 'Double', rowId: 'burger' },
+      ]
     }
-  ])
-await reelsRich.send(jid)
+  ]
+})
 
-// Mixed content (text + code + table + image + source)
-const mixedRich = new AIRich(sock)
-  .addText('Here is a [full report](https://example.com):')
-  .addCode('python', 'print("Hello World")')
-  .addTable([['Metric', 'Value'], ['Users', '1,234'], ['Revenue', '$5,678']])
-  .addImage('https://example.com/chart.jpg')
-  .addSource([
-    ['https://example.com/favicon.ico', 'https://example.com/report', 'Full Report']
-  ])
-await mixedRich.send(jid)
+// Interactive dengan URL button
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Visit Us', hasMediaAttachment: false },
+    body: { text: 'Click the button below.' },
+    footer: { text: 'alwayscodex' },
+    nativeFlowMessage: {
+      buttons: [{
+        name: 'cta_url',
+        buttonParamsJson: JSON.stringify({
+          display_text: 'Open Website',
+          url: 'https://github.com/BAWORBAWORID/baileys',
+        })
+      }],
+      messageParamsJson: ''
+    }
+  }
+})
 
-// Build without sending (get raw payload)
-const payload = rich.build()
-console.log(payload.botForwardedMessage) // raw message object
+// Interactive dengan single select (dropdown)
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Select Plan', hasMediaAttachment: false },
+    body: { text: 'Choose your subscription:' },
+    footer: { text: 'alwayscodex Services' },
+    nativeFlowMessage: {
+      buttons: [{
+        name: 'single_select',
+        buttonParamsJson: JSON.stringify({
+          title: 'Available Plans',
+          sections: [{
+            title: 'Plans',
+            rows: [
+              { header: 'Free', title: 'Free Plan', description: 'Basic', id: 'free' },
+              { header: 'Pro', title: 'Pro - $15', description: 'All features', id: 'pro' },
+            ]
+          }]
+        })
+      }],
+      messageParamsJson: ''
+    }
+  }
+})
 
-// Build without forwarding (no "forwarded" badge)
-const noFwd = rich.build({ forwarded: false })
+// Interactive dengan copy code button
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    header: { title: 'Your Promo Code', hasMediaAttachment: false },
+    body: { text: 'Use the code below for 20% off.' },
+    footer: { text: 'alwayscodex Shop' },
+    nativeFlowMessage: {
+      buttons: [{
+        name: 'cta_copy',
+        buttonParamsJson: JSON.stringify({
+          display_text: 'Copy Code',
+          copy_code: 'ALWAYSCODEX20'
+        })
+      }],
+      messageParamsJson: ''
+    }
+  }
+})
 
-// Build without encoded unifiedResponse
-const noEncode = rich.build({ includesUnifiedResponse: false })
+// Carousel / Image Slide
+await sock.sendMessage(jid, {
+  interactiveMessage: {
+    body: { text: 'Browse our products:' },
+    footer: { text: 'Swipe to see more' },
+    carouselMessage: {
+      cards: [
+        {
+          header: {
+            imageMessage: { url: 'https://example.com/product1.jpg', mimetype: 'image/jpeg' },
+            hasMediaAttachment: true
+          },
+          body: { text: 'Product 1' },
+          footer: { text: 'Rp 99.000' },
+          nativeFlowMessage: {
+            buttons: [{ name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Buy', id: 'buy_1' }) }],
+            messageParamsJson: ''
+          }
+        }
+      ]
+    }
+  }
+})
 ```
+
+> 💡 **Lihat bagian [Interactive Message](#interactive-message) di atas untuk contoh lebih lengkap** (PIX button, PAY button, reminder, address, location, media header, dll).
 
 ### External Ad Reply (all message types)
 
@@ -1855,17 +1648,157 @@ await sock.sendMessage(jid, {
 })
 ```
 
-### Interactive Buttons (native flow shorthand)
+### Interactive Buttons — Full All Types (shorthand)
+
+Kirim semua jenis button native flow dalam satu `conn.sendMessage()`:
 
 ```js
-await sock.sendMessage(jid, {
-  text: 'Quick options',
-  footer: 'Alwayscodex',
+await conn.sendMessage(m.chat, {
+  text: "This is an Interactive message!",
+  title: "Hiii",
+  subtitle: "There is a subtitle",
+  footer: "Hello World!",
   interactiveButtons: [
-    { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Option A', id: 'opt_a' }) },
-    { name: 'quick_reply', buttonParamsJson: JSON.stringify({ display_text: 'Option B', id: 'opt_b' }) }
-  ]
-})
+    {
+      name: "quick_reply",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Click Me!",
+        id: "your_id",
+      }),
+    },
+    {
+      name: "cta_url",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Follow Me",
+        url: "https://whatsapp.com/channel/0029Vb7JPWCAInPfKWC14s2V",
+      }),
+    },
+    {
+      name: "cta_copy",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Copy Link",
+        copy_code: "https://whatsapp.com/channel/0029Vb7JPWCAInPfKWC14s2V",
+      }),
+    },
+    {
+      name: "cta_call",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Call Me!",
+        phone_number: "628xxx",
+      }),
+    },
+    {
+      name: "cta_catalog",
+      buttonParamsJson: JSON.stringify({
+        business_phone_number: "628xxx",
+      }),
+    },
+    {
+      name: "cta_reminder",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Set Reminder",
+      }),
+    },
+    {
+      name: "cta_cancel_reminder",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Cancel Reminder",
+      }),
+    },
+    {
+      name: "address_message",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Send Address",
+      }),
+    },
+    {
+      name: "send_location",
+      buttonParamsJson: JSON.stringify({
+        display_text: "Send Location",
+      }),
+    },
+    {
+      name: "open_webview",
+      buttonParamsJson: JSON.stringify({
+        title: "Follow Me!",
+        link: {
+          in_app_webview: true,
+          url: "https://whatsapp.com/channel/0029Vb7JPWCAInPfKWC14s2V",
+        },
+      }),
+    },
+    {
+      name: "mpm",
+      buttonParamsJson: JSON.stringify({
+        product_id: "8816262248471474",
+      }),
+    },
+    {
+      name: "wa_payment_transaction_details",
+      buttonParamsJson: JSON.stringify({
+        transaction_id: "12345848",
+      }),
+    },
+    {
+      name: "automated_greeting_message_view_catalog",
+      buttonParamsJson: JSON.stringify({
+        business_phone_number: "628xxx",
+        catalog_product_id: "12345",
+      }),
+    },
+    {
+      name: "galaxy_message",
+      buttonParamsJson: JSON.stringify({
+        mode: "published",
+        flow_message_version: "3",
+        flow_token: "1:1307913409923914:293680f87029f5a13d1ec5e35e718af3",
+        flow_id: "1307913409923914",
+        flow_cta: "AlwaysCodex",
+        flow_action: "navigate",
+        flow_action_payload: {
+          screen: "QUESTION_ONE",
+          params: {
+            user_id: "123456789",
+            referral: "campaign_xyz",
+          },
+        },
+        flow_metadata: {
+          flow_json_version: "201",
+          data_api_protocol: "v2",
+          flow_name: "Lead Qualification [en]",
+          data_api_version: "v2",
+          categories: ["Lead Generation", "Sales"],
+        },
+      }),
+    },
+    {
+      name: "single_select",
+      buttonParamsJson: JSON.stringify({
+        title: "Click Me!",
+        sections: [
+          {
+            title: "Title 1",
+            highlight_label: "Highlight label 1",
+            rows: [
+              {
+                header: "Header 1",
+                title: "Title 1",
+                description: "Description 1",
+                id: "id_1",
+              },
+              {
+                header: "Header 2",
+                title: "Title 2",
+                description: "Description 2",
+                id: "id_2",
+              },
+            ],
+          },
+        ],
+      }),
+    },
+  ],
+});
 ```
 
 ### List Reply (send simulated response)
@@ -2590,6 +2523,118 @@ Token types produced by the built-in tokenizer: `KEYWORD`, `STR`, `NUMBER`, `MET
 
 WAProto types used: `AIRichResponseMessage` (field 97), `AIRichResponseUnifiedResponse`, `ForwardedAIBotMessageInfo`, `BotMessageSharingInfo` — all present in WAProto.
 
+### Rich AI Message (Full Format — `richMessage`)
+
+Format lengkap AI response dengan **product, images, table, code, reels, sources, tip, suggestions**, dll.  
+Juga menggunakan `botForwardedMessage` → `richResponseMessage` → `unifiedResponse`.
+
+```js
+// Product card + tip + suggestions
+await conn.sendMessage(m.chat, {
+  richMessage: {
+    product: {
+      title: "Jasa Bot WhatsApp",
+      brand: "LevviCode",
+      price: "50000",
+      sale_price: "35000",
+      product_url: "https://www.levvicode.cloud/",
+      image: { url: "https://example.com/image.jpg" }
+    },
+    tip: " ",
+    suggestions: [
+      "Beli Sekarang",
+      "Lihat Demo"
+    ]
+  }
+}, { quoted: m })
+```
+
+#### Semua fitur `richMessage`:
+
+| Key | Tipe | Fungsi |
+|---|---|---|
+| `text` | string | Teks dengan inline entities `[text](url)` (link), `[](url)` (citation), atau `[latex](url)` |
+| `code` | `{ language, code }` | Code block dengan syntax highlighting otomatis |
+| `table` | `[[header], [row1], [row2]]` | Tabel dengan baris pertama sebagai header |
+| `images` | `string \| string[]` | **Multi support** — single URL atau array URL (grid) |
+| `video` | string | Video URL |
+| `product` | object | Kartu produk (`title`, `brand`, `price`, `sale_price`, `product_url`, `image`) |
+| `post` | object | Kartu postingan |
+| `reels` | `object \| object[]` | **Multi support** — single atau array Reel Instagram |
+| `sources` | `object \| object[]` | **Multi support** — single atau array sumber referensi |
+| `tip` | string | Teks metadata/tip di bagian atas |
+| `suggestions` | `string[]` | Suggestion pills yang bisa diklik |
+| `footer` | string | Teks footer |
+
+#### Contoh kombinasi:
+
+```js
+// Product + text + suggestions
+await conn.sendMessage(m.chat, {
+  richMessage: {
+    text: "Rekomendasi produk terbaru dari kami:",
+    product: {
+      title: "Bot WhatsApp Premium",
+      brand: "LevviCode",
+      price: "100000",
+      sale_price: "75000",
+      product_url: "https://example.com/bot",
+      image: { url: "https://example.com/bot.jpg" }
+    },
+    tip: "Promo terbatas!",
+    suggestions: ["Beli Sekarang", "Lihat Demo", "Hubungi Admin"]
+  }
+}, { quoted: m })
+```
+
+```js
+// Text + code block + table
+await conn.sendMessage(m.chat, {
+  richMessage: {
+    text: "Berikut adalah contoh kode dan tabel perbandingan:",
+    code: {
+      language: "javascript",
+      code: "function hello() {\n  console.log('Hello World');\n}"
+    },
+    table: [
+      ["Fitur", "Gratis", "Premium"],
+      ["Users", "10", "Unlimited"],
+      ["Support", "Email", "24/7"]
+    ],
+    tip: "Upgrade ke Premium untuk fitur lengkap"
+  }
+}, { quoted: m })
+```
+
+```js
+// Images + sources
+await conn.sendMessage(m.chat, {
+  richMessage: {
+    text: "Berikut adalah gambar referensi:",
+    images: [
+      "https://example.com/photo1.jpg",
+      "https://example.com/photo2.jpg"
+    ],
+    sources: [
+      ["https://example.com/favicon.ico", "https://example.com", "Sumber 1"],
+      ["https://example2.com/favicon.ico", "https://example2.com", "Sumber 2"]
+    ],
+    footer: "Powered by AlwaysCodex"
+  }
+}, { quoted: m })
+```
+
+**Catatan Multi Support:**
+- `images` → `string` (single) atau `string[]` (multi/grid)
+- `reels` → `object` (single) atau `object[]` (multi/horizontal scroll)
+- `sources` → `object` (single) atau `object[]` (multi)
+- `suggestions` → selalu `string[]` (multi)
+- Semua yang lain → single value
+
+**Catatan:** `richMessage` berbeda dari `richResponse`:
+- `richResponse` → simple, hanya text + code
+- `richMessage` → full format dengan product, images, table, reels, sources, dll
+
 ---
 
 ## New Message Types (WA 2.3000+)
@@ -2807,6 +2852,176 @@ console.log(MAINTENANCE_MESSAGE)
 ```
 
 > **Note:** `npm run maintenance:on/off` directly modifies `lib/Defaults/index.js`, so the effect is persistent until changed again. For temporary usage (env-based), set variables in your own code before calling `makeWASocket`.
+
+---
+
+## Internal Architecture (Source Code)
+
+Berikut adalah arsitektur internal dari source code `lib/`:
+
+### Layered Socket Architecture
+
+```
+makeSocket(config)              → WS, auth, prekeys
+  ↓
+makeChatsSocket(config)         → Chat operations
+  ↓
+makeGroupsSocket(config)        → Group CRUD + metadata
+  ↓
+makeNewsletterSocket(config)    → Newsletter/channel
+  ↓
+makeMessagesSocket(config)      → SEND messages + relay
+  ↓
+makeMessagesRecvSocket(config)  → RECV messages + retry
+```
+
+### Core Send Flow: `relayMessage()`
+
+File: `lib/Socket/messages-send.js`
+
+1. **Determine type** — group, private, newsletter, or status
+2. **Get devices** — via `getUSyncDevices()` (with cache)
+3. **Encrypt**:
+   - **Group/Status** → `signalRepository.encryptGroupMessage()` (sender key)
+   - **Private** → `signalRepository.encryptMessage()` (per-device)
+4. **Build stanza XML** and send via `sendNode()`
+5. **Add metadata** — `device-identity`, `tctoken`, `multicast`
+
+### Button Detection & Sending
+
+3 jenis button dideteksi:
+
+```js
+// lib/Socket/messages-send.js
+const getButtonType = (message) => {
+    if (message.listMessage) return "list";
+    if (message.buttonsMessage) return "buttons";
+    if (message.interactiveMessage?.nativeFlowMessage) return "native_flow";
+};
+```
+
+Stanza XML dikirim dengan tag `<biz>` berisi:
+- `actual_actors`, `host_storage`, `privacy_mode_ts`
+- `<interactive type="native_flow" v="1">` → `<native_flow v="9" name="mixed">`
+- `<quality_control source_type="third_party">`
+
+**Special native flows**: `mpm`, `cta_catalog`, `send_location`, `call_permission_request`, `wa_payment_transaction_details`, `automated_greeting_message_view_catalog`
+
+### Group Events — `lib/Socket/groups.js`
+
+```js
+groupCreate(subject, participants)
+groupLeave(id)
+groupUpdateSubject(jid, subject)
+groupUpdateDescription(jid, description)
+groupParticipantsUpdate(jid, participants, action) // add|remove|promote|demote
+groupSettingUpdate(jid, setting)  // announcement|not_announcement|locked|unlocked
+groupInviteCode(jid)
+groupRevokeInvite(jid)
+groupAcceptInvite(code)
+groupToggleEphemeral(jid, expirationSeconds)
+groupMemberAddMode(jid, mode)     // all_member_add|admin_add
+groupJoinApprovalMode(jid, mode)  // on|off
+groupMetadata(jid)                // metadata lengkap
+groupFetchAllParticipating()      // semua grup
+```
+
+#### Group Notifications — `lib/Socket/messages-recv.js`
+
+Semua notifikasi grup diproses via `handleGroupNotification()`:
+
+| child.tag | StubType |
+|---|---|
+| `create` | `GROUP_CREATE` |
+| `add` | `GROUP_PARTICIPANT_ADD` |
+| `remove` | `GROUP_PARTICIPANT_REMOVE` / `LEAVE` |
+| `promote` | `GROUP_PARTICIPANT_PROMOTE` |
+| `demote` | `GROUP_PARTICIPANT_DEMOTE` |
+| `leave` | `GROUP_PARTICIPANT_LEAVE` |
+| `subject` | `GROUP_CHANGE_SUBJECT` |
+| `description` | `GROUP_CHANGE_DESCRIPTION` |
+| `announcement` / `not_announcement` | `GROUP_CHANGE_ANNOUNCE` |
+| `locked` / `unlocked` | `GROUP_CHANGE_RESTRICT` |
+| `invite` | `GROUP_CHANGE_INVITE_LINK` |
+| `ephemeral` / `not_ephemeral` | `EPHEMERAL_SETTING` |
+| `modify` | `GROUP_PARTICIPANT_CHANGE_NUMBER` |
+| `member_add_mode` | `GROUP_MEMBER_ADD_MODE` |
+| `membership_approval_mode` | `GROUP_MEMBERSHIP_JOIN_APPROVAL_MODE` |
+| `created_membership_requests` | `JOIN_APPROVAL_REQUEST_NON_ADMIN_ADD` |
+| `revoked_membership_requests` | `JOIN_APPROVAL_REQUEST_NON_ADMIN_ADD` (revoked/rejected) |
+
+### Event System — All Events
+
+File: `lib/Socket/messages-recv.js` + event emitter
+
+| Event | Source |
+|---|---|
+| `connection.update` | QR, connecting, open, close |
+| `messages.upsert` | Pesan baru |
+| `messages.update` | Status berubah (read, delivered) |
+| `messages.delete` | Pesan dihapus |
+| `messages.media-update` | Media re-upload |
+| `message-receipt.update` | Receipt per-user di grup |
+| `chats.upsert` / `update` / `delete` | Chat berubah |
+| `contacts.upsert` / `update` | Kontak berubah |
+| `groups.upsert` / `update` | Grup berubah |
+| `group-participants.update` | Peserta grup berubah |
+| `presence.update` | Online/typing |
+| `call` | Panggilan |
+| `creds.update` | Auth state |
+| `blocklist.update` | Blocklist |
+| `newsletter.reaction` / `view` | Newsletter |
+| `newsletter-settings.update` | Settings newsletter |
+| `newsletter-participants.update` | Participant newsletter |
+| `community-owner.update` | Owner komunitas |
+| `limit-sharing.update` | Limit sharing |
+
+### Message Type Detection — `getMediaType()`
+
+```js
+image     → "image"
+sticker   → "sticker" | "1p_sticker" | "avatar_sticker"
+video     → "video" | "gif"
+audio     → "audio" | "ptt"
+ptv       → "ptv"
+album     → "collection"
+contact   → "vcard"
+document  → "document"
+stickerPack → "sticker_pack"
+contactsArray → "contact_array"
+location  → "location"
+livelocation → "livelocation"
+list      → "list"
+listResponse → "list_response"
+buttonsResponse → "buttons_response"
+order     → "order"
+product   → "product"
+interactiveResponse → "native_flow_response"
+```
+
+### Key Source Files
+
+| File | Fungsi |
+|---|---|
+| `lib/Socket/socket.js` | WS connection, auth, prekeys |
+| `lib/Socket/messages-send.js` | Kirim + relay message, button handling |
+| `lib/Socket/messages-recv.js` | Terima + decrypt, retry, group/contact notifications |
+| `lib/Socket/groups.js` | Group CRUD, metadata |
+| `lib/Socket/chats.js` | Chat operations |
+| `lib/Socket/newsletter.js` | Newsletter/channel |
+| `lib/Socket/community.js` | Community management |
+| `lib/Socket/business.js` | Business profile |
+| `lib/Types/Events.js` | Event type definitions |
+| `lib/Types/Message.js` | Message types + WAMessageAddressingMode |
+| `lib/Utils/messages.js` | Message generation utilities |
+| `lib/Utils/process-message.js` | Message content processing |
+| `lib/Utils/generics.js` | Generic utilities, version, hwaifu |
+| `lib/Defaults/connection.js` | Default connection config |
+| `lib/Defaults/constants.js` | Constants, NOISE, prekeys, media paths |
+| `lib/WABinary/` | Binary XML encode/decode |
+| `lib/WAM/` | WAM buffer/stats encoding |
+| `lib/WAUSync/` | USync query execution (device, LID, contact lookup) |
+| `lib/Store/` | In-memory store, cache-manager store, ordered dictionary |
 
 ---
 
