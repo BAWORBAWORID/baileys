@@ -1,4 +1,4 @@
-<h1 align='center'><img alt="Baileys logo" src="http://unggah.web.id/OsJZcp7gopZP.png" height="75"/></h1>
+<h1 align='center'><img alt="Baileys logo" src="https://raw.githubusercontent.com/WhiskeySockets/Baileys/refs/heads/master/Media/logo.png" height="75"/></h1>
 
 <div align='center'>Baileys is a WebSockets-based TypeScript library for interacting with the WhatsApp Web API.</div>
 
@@ -17,8 +17,12 @@ New guide link: https://baileys.wiki
 
 # Get Support
 
-If you'd like business to enterprise-level support from alwayscodex.
+If you'd like business to enterprise-level support from Rajeh, the current maintainer of Baileys, you can book a video chat. Book a 1 hour time slot by contacting him on Discord or pre-ordering [here](https://purpshell.dev/book). The earlier you pre-order the better, as his time slots usually fill up very quickly. He offers immense value per hour and will answer all your questions before the time runs out.
+
 If you are a business, we encourage you to contribute back to the high development costs of the project and to feed the maintainers who dump tens of hours a week on this. You can do so by booking meetings or sponsoring below. All support, even in bona fide / contribution hours, is welcome by businesses of all sizes. This is not condoning or endorsing businesses to use the library. See the Disclaimer below.
+
+# Sponsor
+If you'd like to financially support this project, you can do so by supporting the current maintainer [here](https://purpshell.dev/sponsor).
 
 # Disclaimer
 This project is not affiliated, associated, authorized, endorsed by, or in any way officially connected with WhatsApp or any of its subsidiaries or its affiliates.
@@ -32,9 +36,12 @@ Use at your own discretion. Do not spam people with this. We discourage any stal
 - Baileys does not require Selenium or any other browser to be interface with WhatsApp Web, it does so directly using a **WebSocket**.
 - Not running Selenium or Chromium saves you like **half a gig** of ram :/
 - Baileys supports interacting with the multi-device & web versions of WhatsApp.
+- Thank you to [@pokearaujo](https://github.com/pokearaujo/multidevice) for writing his observations on the workings of WhatsApp Multi-Device. Also, thank you to [@Sigalor](https://github.com/sigalor/whatsapp-web-reveng) for writing his observations on the workings of WhatsApp Web and thanks to [@Rhymen](https://github.com/Rhymen/go-whatsapp/) for the __go__ implementation.
 
 > [!IMPORTANT]
-This is the only official fork repository and is maintained by the community.
+> The original repository had to be removed by the original author - we now continue development in this repository here.
+This is the only official repository and is maintained by the community.
+> **Join the Discord [here](https://discord.gg/WeJM5FP9GG)**
 
 ## Example
 
@@ -49,16 +56,22 @@ To run the example script, download or clone the repo and then type the followin
 
 Use the stable version:
 ```
-yarn add @alwayscodex/baileys
+yarn add @whiskeysockets/baileys
+```
+
+Use the edge version (no guarantee of stability, but latest fixes + features)
+```
+yarn add github:WhiskeySockets/Baileys
 ```
 
 Then import your code using:
 ```ts
-import makeWASocket from '@alwayscodex/baileys'
+import makeWASocket from '@whiskeysockets/baileys'
 ```
 
 # Links
 
+- [Discord](https://discord.gg/WeJM5FP9GG)
 - [Docs](https://baileys.wiki/docs/intro/)
 
 # Index
@@ -72,12 +85,18 @@ import makeWASocket from '@alwayscodex/baileys'
     - [Improve Retry System & Decrypt Poll Votes](#improve-retry-system--decrypt-poll-votes)
     - [Receive Notifications in Whatsapp App](#receive-notifications-in-whatsapp-app)
 
-- [Save Auth Info](#saving--restoring-sessions)
+- [Saving & Restoring Sessions](#saving--restoring-sessions)
+    - [useMultiFileAuthState (Recommended)](#1-usemultifileauthstate-recommended-for-most-use-cases)
+    - [useSingleFileAuthState (Simple)](#2-usesinglefileauthstate-simple-single-json-file)
+    - [makeCacheManagerAuthState (Production)](#3-makecachemanagerauthstate-for-production-with-cache-stores)
+    - [Auth State Comparison](#all-auth-state-methods-comparison)
 - [Handling Events](#handling-events)
     - [Example to Start](#example-to-start)
     - [Decrypt Poll Votes](#decrypt-poll-votes)
     - [Summary of Events on First Connection](#summary-of-events-on-first-connection)
 - [Implementing a Data Store](#implementing-a-data-store)
+    - [In-Memory Store](#in-memory-store-for-developmenttesting)
+    - [Using Store with Auth State](#using-store-with-auth-state)
 - [Whatsapp IDs Explain](#whatsapp-ids-explain)
 - [Utility Functions](#utility-functions)
 - [Sending Messages](#sending-messages)
@@ -106,6 +125,7 @@ import makeWASocket from '@alwayscodex/baileys'
     - [Downloading Media Messages](#downloading-media-messages)
     - [Re-upload Media Message to Whatsapp](#re-upload-media-message-to-whatsapp)
 - [Reject Call](#reject-call)
+- [Send Offer Call (Outgoing Call)](#send-offer-call-outgoing-call)
 - [Send States in Chat](#send-states-in-chat)
     - [Reading Messages](#reading-messages)
     - [Update Presence](#update-presence)
@@ -124,6 +144,16 @@ import makeWASocket from '@alwayscodex/baileys'
     - [Fetch Profile Picture (groups too)](#fetch-profile-picture-groups-too)
     - [Fetch Bussines Profile (such as description or category)](#fetch-bussines-profile-such-as-description-or-category)
     - [Fetch Someone's Presence (if they're typing or online)](#fetch-someones-presence-if-theyre-typing-or-online)
+- [Username Management](#username-management)
+    - [Check Username](#check-username)
+    - [Set Username](#set-username)
+    - [Delete Username](#delete-username)
+- [Privacy & Account Management](#privacy--account-management)
+    - [Privacy Settings](#privacy-settings)
+    - [Status & Profile](#status--profile)
+    - [Account & Auth](#account--auth)
+    - [Linked Profiles](#linked-profiles)
+    - [Misc Operations](#misc-operations)
 - [Change Profile](#change-profile)
     - [Change Profile Status](#change-profile-status)
     - [Change Profile Name](#change-profile-name)
@@ -182,7 +212,7 @@ WhatsApp provides a multi-device API that allows Baileys to be authenticated as 
 > You can customize browser name if you connect with **QR-CODE**, with `Browser` constant, we have some browsers config, **see the [BrowsersMap type alias](https://baileys.wiki/docs/api/type-aliases/BrowsersMap/)**
 
 ```ts
-import makeWASocket from '@alwayscodex/baileys'
+import makeWASocket from '@whiskeysockets/baileys'
 
 const sock = makeWASocket({
     // can provide additional config here
@@ -202,7 +232,7 @@ If the connection is successful, you will see a QR code printed on your terminal
 The phone number can't have `+` or `()` or `-`, only numbers, you must provide country code
 
 ```ts
-import makeWASocket from '@alwayscodex/baileys'
+import makeWASocket from '@whiskeysockets/baileys'
 
 const sock = makeWASocket({
     // can provide additional config here
@@ -215,6 +245,28 @@ if (!sock.authState.creds.registered) {
     console.log(code)
 }
 ```
+
+### Custom Pairing Code
+
+You can provide a custom 8-character pairing code instead of using a random one:
+
+```ts
+import makeWASocket from '@whiskeysockets/baileys'
+
+const sock = makeWASocket({
+    printQRInTerminal: false
+})
+
+if (!sock.authState.creds.registered) {
+    const number = 'XXXXXXXXXXX'
+    // custom code must be exactly 8 characters
+    const code = await sock.requestPairingCode(number, 'MYCODE123')
+    console.log(code) // MYCODE123
+}
+```
+
+> [!NOTE]
+> Custom pairing code must be exactly 8 characters. If omitted, a random code is generated automatically.
 
 ### Receive Full History
 
@@ -273,25 +325,74 @@ const sock = makeWASocket({
 
 You obviously don't want to keep scanning the QR code every time you want to connect.
 
-So, you can load the credentials to log back in:
+There are 3 methods to save auth state:
+
+### 1. useMultiFileAuthState (Recommended for most use cases)
+
+Saves each key as a separate file in a folder. Best for production — efficient and handles concurrent writes well.
+
 ```ts
-import makeWASocket, { useMultiFileAuthState } from '@alwayscodex/baileys'
+import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys'
 
 const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys')
 
-// will use the given state to connect
-// so if valid credentials are available -- it'll connect without QR
 const sock = makeWASocket({ auth: state })
 
-// this will be called as soon as the credentials are updated
 sock.ev.on('creds.update', saveCreds)
 ```
 
 > [!IMPORTANT]
-> `useMultiFileAuthState` is a utility function to help save the auth state in a single folder, this function serves as a good guide to help write auth & key states for SQL/no-SQL databases, which I would recommend in any production grade system.
+> `useMultiFileAuthState` saves each key as a separate file in the given folder. This is the recommended approach for most use cases.
+
+### 2. useSingleFileAuthState (Simple, single JSON file)
+
+Saves the entire auth state in one JSON file. Simpler but less efficient for large key stores. Good for quick prototyping.
+
+```ts
+import makeWASocket from '@whiskeysockets/baileys'
+import { useSingleFileAuthState } from '@whiskeysockets/baileys'
+
+const { state, saveCreds } = await useSingleFileAuthState('./auth_state.json')
+
+const sock = makeWASocket({ auth: state })
+
+sock.ev.on('creds.update', saveCreds)
+```
 
 > [!NOTE]
-> When a message is received/sent, due to signal sessions needing updating, the auth keys (`authState.keys`) will update. Whenever that happens, you must save the updated keys (`authState.keys.set()` is called). Not doing so will prevent your messages from reaching the recipient & cause other unexpected consequences. The `useMultiFileAuthState` function automatically takes care of that, but for any other serious implementation -- you will need to be very careful with the key state management.
+> `useSingleFileAuthState` stores everything in a single JSON file with file locking (Mutex) for safety. For production, prefer `useMultiFileAuthState`.
+
+### 3. makeCacheManagerAuthState (For production with cache stores)
+
+Uses `cache-manager` for auth state storage. Ideal for production systems with Redis, Memcached, or any cache store supported by cache-manager.
+
+```ts
+import makeWASocket, { makeCacheManagerAuthState } from '@whiskeysockets/baileys'
+import { createCache } from 'cache-manager'
+
+// Create a cache store (e.g., memory, redis, etc.)
+const store = createCache({ store: 'memory', max: 1000, ttl: 600 })
+
+const { state, saveCreds } = await makeCacheManagerAuthState(store, 'session_key')
+
+const sock = makeWASocket({ auth: state })
+
+sock.ev.on('creds.update', saveCreds)
+```
+
+> [!NOTE]
+> `makeCacheManagerAuthState` requires `cache-manager` as a dependency. Install with: `npm install cache-manager`
+
+### All Auth State Methods Comparison
+
+| Method | Storage | Best For |
+|--------|---------|----------|
+| `useMultiFileAuthState` | Folder with multiple files | Most use cases, recommended |
+| `useSingleFileAuthState` | Single JSON file | Quick prototyping, simple setups |
+| `makeCacheManagerAuthState` | Cache store (Redis, memory, etc.) | Production with external cache |
+
+> [!NOTE]
+> When a message is received/sent, due to signal sessions needing updating, the auth keys (`authState.keys`) will update. Whenever that happens, you must save the updated keys (`authState.keys.set()` is called). Not doing so will prevent your messages from reaching the recipient & cause other unexpected consequences. All three auth state functions above automatically take care of that.
 
 ## Handling Events
 
@@ -318,7 +419,7 @@ sock.ev.on('messages.upsert', ({ messages }) => {
 > For reliable serialization of the authentication state, especially when storing as JSON, always use the BufferJSON utility.
 
 ```ts
-import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@alwayscodex/baileys'
+import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
 
 async function connectToWhatsApp () {
@@ -397,10 +498,10 @@ sock.ev.on('messages.update', event => {
 > [!IMPORTANT]
 > I highly recommend building your own data store, as storing someone's entire chat history in memory is a terrible waste of RAM.
 
-It can be used as follows:
+### In-Memory Store (for development/testing)
 
 ```ts
-import makeWASocket, { makeInMemoryStore } from '@alwayscodex/baileys'
+import makeWASocket, { makeInMemoryStore } from '@whiskeysockets/baileys'
 // the store maintains the data of the WA connection in memory
 // can be written out to a file & read from it
 const store = makeInMemoryStore({ })
@@ -425,10 +526,30 @@ sock.ev.on('chats.upsert', () => {
 sock.ev.on('contacts.upsert', () => {
     console.log('got contacts', Object.values(store.contacts))
 })
-
 ```
 
 The store also provides some simple functions such as `loadMessages` that utilize the store to speed up data retrieval.
+
+### Using Store with Auth State
+
+You can combine the store with any auth state method. Here's an example using `useSingleFileAuthState`:
+
+```ts
+import makeWASocket, { useSingleFileAuthState, makeInMemoryStore } from '@whiskeysockets/baileys'
+
+const { state, saveCreds } = await useSingleFileAuthState('./auth.json')
+const store = makeInMemoryStore({ })
+
+const sock = makeWASocket({
+    auth: state,
+    getMessage: async (key) => {
+        return await store.loadMessage(key.remoteJid, key.id)
+    }
+})
+
+store.bind(sock.ev)
+sock.ev.on('creds.update', saveCreds)
+```
 
 ## Whatsapp IDs Explain
 
@@ -586,7 +707,7 @@ await sock.sendMessage(
 await sock.sendMessage(
     jid,
     {
-        text: 'Hi, this was sent using https://github.com/alwayscodex/baileys'
+        text: 'Hi, this was sent using https://github.com/whiskeysockets/baileys'
     }
 )
 ```
@@ -716,7 +837,7 @@ await sock.sendMessage(jid, {
 If you want to save the media you received
 ```ts
 import { createWriteStream } from 'fs'
-import { downloadMediaMessage, getContentType } from '@alwayscodex/baileys'
+import { downloadMediaMessage, getContentType } from '@whiskeysockets/baileys'
 
 sock.ev.on('messages.upsert', async ({ [m] }) => {
     if (!m.message) return // if there is no text or media message
@@ -757,6 +878,36 @@ await sock.updateMediaMessage(msg)
 ```ts
 await sock.rejectCall(callId, callFrom)
 ```
+
+## Send Offer Call (Outgoing Call)
+
+- You can initiate a call to someone using `sendOfferCall`
+- Returns a `callId` for tracking
+
+```ts
+// Voice call (default)
+const callId = await sock.sendOfferCall('628xxx@s.whatsapp.net')
+console.log('call sent with id:', callId)
+```
+
+### Options
+
+```ts
+// Video call
+const callId = await sock.sendOfferCall('628xxx@s.whatsapp.net', { isVideo: true })
+
+// Group call
+const callId = await sock.sendOfferCall('group@g.us', { isGroup: true, groupJid: 'group@g.us' })
+
+// Voice call (explicit)
+const callId = await sock.sendOfferCall('628xxx@s.whatsapp.net', { isVideo: false })
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `isVideo` | boolean | `false` | Send as video call |
+| `isGroup` | boolean | `false` | Send as group call |
+| `groupJid` | string | `undefined` | Group JID for group calls |
 
 ## Send States in Chat
 
@@ -964,6 +1115,638 @@ sock.ev.on('presence.update', console.log)
 await sock.presenceSubscribe(jid)
 ```
 
+## Username Management
+
+Manage your WhatsApp username using the MEX (GraphQL) protocol.
+
+### Check Username
+
+Check if a username is available and get suggestions if taken:
+
+```ts
+const result = await sock.checkUsername('myname')
+console.log(result)
+// { available: true, username: 'myname', session_id: '...' }
+// or
+// { available: false, username: 'myname', session_id: '...', suggestions: ['myname123', 'myname_'], rejectionReasons: [], suggestionsEligible: true }
+```
+
+**Options:**
+```ts
+const result = await sock.checkUsername('myname', true, 'custom-session-id')
+```
+
+### Set Username
+
+Set or reserve a username for your WhatsApp account:
+
+```ts
+const result = await sock.setUsername('myname')
+console.log(result)
+```
+
+**Options:**
+```ts
+const result = await sock.setUsername('myname', {
+    pin: '123456',                    // optional PIN for username reservation
+    sessionId: 'custom-session-id',   // optional, auto-generated if omitted
+    source: 'USER_INPUT'              // 'USER_INPUT' | 'IG' | 'FB' | 'SUGGESTION'
+})
+```
+
+### Delete Username
+
+Delete your current username:
+
+```ts
+const result = await sock.deleteUsername()
+console.log(result)
+```
+
+### Get My Username
+
+Get your current username:
+
+```ts
+const username = await sock.getMyUsername()
+console.log(username) // 'myname' or null
+```
+
+### Set Username PIN
+
+Protect your username with a PIN:
+
+```ts
+// Set PIN
+await sock.setUsernamePin('123456')
+
+// Delete PIN
+await sock.setUsernamePin(null)
+```
+
+### Find User by Username
+
+Look up a contact by their @username:
+
+```ts
+const user = await sock.findUserByUsername('myname')
+console.log(user) // { jid: '123456@s.whatsapp.net', contact: true } or null
+
+// With PIN-protected username
+const user = await sock.findUserByUsername('myname', '123456')
+```
+
+### Fetch Contact Usernames
+
+Get usernames for one or more JIDs:
+
+```ts
+const usernames = await sock.fetchContactUsernames('123456@s.whatsapp.net', '789012@s.whatsapp.net')
+console.log(usernames) // [{ id: '123456@s.whatsapp.net', username: 'myname' }, ...]
+```
+
+### Check Multiple Usernames
+
+Check availability for multiple usernames at once:
+
+```ts
+const results = await sock.checkUsernameMulti(['name1', 'name2', 'name3'])
+console.log(results)
+```
+
+### Get Username Recommendations
+
+Get suggested usernames:
+
+```ts
+const suggestions = await sock.getUsernameRecommendations('FB')
+console.log(suggestions)
+```
+
+### Check and Set Username
+
+Convenience function to check availability and set if available:
+
+```ts
+const result = await sock.checkAndSetUsername('myname')
+if (result.available) {
+    console.log('Username set successfully!')
+} else {
+    console.log('Username taken, suggestions:', result.suggestions)
+}
+```
+
+| Method | Parameters | Returns |
+|--------|------------|---------|
+| `checkUsername(username, includeSuggestions?, sessionId?)` | `username`: string, `includeSuggestions`: boolean (default true), `sessionId`: string (optional) | `{ available, username, session_id, suggestions?, rejectionReasons?, suggestionsEligible? }` |
+| `setUsername(username, opts?)` | `username`: string, `opts`: `{ source?, sessionId?, pin? }` | MEX response data |
+| `deleteUsername()` | none | MEX response data |
+| `getMyUsername()` | none | `string` or `null` |
+| `setUsernamePin(pin?)` | `pin`: string or null | MEX response data |
+| `findUserByUsername(username, pin?)` | `username`: string, `pin`: string (optional) | `{ jid, contact }` or `null` |
+| `fetchContactUsernames(...jids)` | `...jids`: string[] | `Array<{ id, username }>` |
+| `checkUsernameMulti(usernames[])` | `usernames`: string[] | MEX response data |
+| `getUsernameRecommendations(source?)` | `source`: string (optional) | MEX response data |
+| `checkAndSetUsername(username)` | `username`: string | `{ available, ... }` or MEX response data |
+
+## Privacy & Account Management
+
+Manage privacy settings, status, account, and linked profiles via MEX (GraphQL) protocol.
+
+### Privacy Settings
+
+```ts
+// Fetch all privacy settings
+const settings = await sock.getPrivacySettings('your_jid@s.whatsapp.net')
+console.log(settings)
+
+// Set a privacy setting
+// Features: "LAST_SEEN", "ONLINE", "PROFILE_PHOTO", "STATUS", "READ_RECEIPTS", "GROUPS", "CALLS", "SCREENSHOT", "LIVE_LOCATION"
+// Settings: "ALL", "CONTACTS", "CONTACT_BLACKLIST", "NONE"
+await sock.setPrivacySetting('LAST_SEEN', 'CONTACTS')
+
+// Update contact list for a privacy setting
+await sock.updatePrivacyContactList('PROFILE_PHOTO', 'CONTACTS', ['123456@s.whatsapp.net'])
+
+// Fetch contact list for a privacy setting
+const contacts = await sock.getPrivacyContactList('PROFILE_PHOTO', 'CONTACTS')
+```
+
+### Status & Profile
+
+```ts
+// Update text status (About)
+await sock.updateTextStatus('Hello World! 🌍')
+await sock.updateTextStatus('Hello', '😊') // with emoji
+
+// Fetch text statuses for JIDs
+const statuses = await sock.getTextStatusList(['123456@s.whatsapp.net'])
+
+// Update user status string
+await sock.updateUserStatus('Available')
+
+// Fetch picture info
+const picInfo = await sock.fetchUserPictureInfo('123456@s.whatsapp.net')
+
+// Set profile picture via MEX
+await sock.setProfilePictureMex(imageBase64, 'image')
+```
+
+### Account & Auth
+
+```ts
+// Mark account as logged-in
+await sock.accountLogin('6281234567890')
+
+// Mark account as logged-out
+await sock.accountLogout('6281234567890', false)
+
+// Add multi-account link
+await sock.addMultiAccountLink('6281234567890')
+
+// Add trusted device
+await sock.addTrustedDevice('device-id-123', 'My Phone')
+
+// Fetch trusted devices
+const devices = await sock.getTrustedDevices()
+
+// Untrust a device
+await sock.untrustTrustedDevice('device-id-123')
+
+// Delete a trusted device
+await sock.deleteTrustedDevice('device-id-123')
+
+// Revoke multi-account link
+await sock.revokeMultiAccount('account_jid@s.whatsapp.net')
+```
+
+### Linked Profiles
+
+```ts
+// Set linked social profiles (FB/IG)
+await sock.linkedProfilesSet([
+    { type: 'facebook', username: 'myfb' },
+    { type: 'instagram', username: 'myig' }
+])
+
+// Remove linked profiles
+await sock.linkedProfilesRemove(['facebook', 'instagram'])
+
+// Update profile visibility
+await sock.linkedProfilesUpdate([
+    { type: 'facebook', showOnProfile: true },
+    { type: 'instagram', showOnProfile: false }
+])
+```
+
+### Misc Operations
+
+```ts
+// Fetch mobile config
+const config = await sock.fetchMobileConfig()
+
+// Notify group of push name
+await sock.notifyPushName('group@g.us', [
+    { jid: '123456@s.whatsapp.net', pushName: 'John' }
+])
+
+// Contact integrity check
+const integrity = await sock.contactIntegrityQuery(['123456@s.whatsapp.net'])
+
+// Business integrity check
+const bizIntegrity = await sock.bizIntegrityQuery(['123456@s.whatsapp.net'])
+
+// Migrate blocklist to LID
+await sock.migrateBlocklistLid(['123456@s.whatsapp.net'])
+
+// Scan QR code
+await sock.qrCodeScan(qrData)
+```
+
+## GraphQL Execution
+
+Execute GraphQL queries across www, facebook, and wamo schemas.
+
+```ts
+import { makeWASocket, makeGraphQLSocket } from '@whiskeysockets/baileys'
+
+const sock = makeWASocket({ auth: state })
+const graphqlSock = makeGraphQLSocket(sock)
+
+// Set access token
+graphqlSock.setAccessToken('your-access-token')
+
+// Execute www-schema GraphQL
+const result = await graphqlSock.executeWWWGraphQL('DOC_ID', { variables }, 'access-token', 'data.path')
+
+// Execute facebook-schema GraphQL
+const fbResult = await graphqlSock.executeFacebookGraphQL('DOC_ID', { variables }, 'access-token')
+
+// Execute wamo-schema GraphQL
+graphqlSock.setWamoAuth({ auth: 'token', host: 'wamo-host' })
+const wamoResult = await graphqlSock.executeWamoGraphQL('DOC_ID', { variables }, { auth: 'token' })
+```
+
+### Meta AI Functions
+
+```ts
+// AI Studio memory
+const memory = await graphqlSock.aiStudioMemoryQuery()
+await graphqlSock.aiStudioMemoryDeleteAll()
+
+// Meta AI memory
+const aiMemory = await graphqlSock.metaAiMemoryQuery()
+await graphqlSock.metaAiMemoryDeleteAll()
+
+// Meta AI unified memory
+const unified = await graphqlSock.metaAiUnifiedMemoryQuery()
+
+// Meta AI memory opt-out
+const status = await graphqlSock.metaAiMemoryOptOutStatus()
+await graphqlSock.metaAiMemoryOptOutUpdate(true)
+
+// Meta AI command
+const command = await graphqlSock.metaAiCommandGet('chat@jid', 'command')
+
+// Voice options
+const voices = await graphqlSock.metaAiVoiceOptionsFetch()
+const defaultVoices = await graphqlSock.metaAiVoiceOptionsWithDefaultFetch()
+
+// Subscription
+const subscription = await graphqlSock.aiSubscriptionState()
+const usage = await graphqlSock.aiUsageData()
+```
+
+### Imagine/GenAI
+
+```ts
+// Onboarding
+await graphqlSock.imagineMeIsOnboarded()
+await graphqlSock.imagineOnboarding({ ... })
+await graphqlSock.imagineOnboardingWithValidation({ ... })
+await graphqlSock.imagineDeleteOnboarding()
+
+// Image generation
+const result = await graphqlSock.imagineEdit({ ... })
+const expanded = await graphqlSock.imagineExpand({ ... })
+const animated = await graphqlSock.imagineGenerateAnimate({ ... })
+const intents = await graphqlSock.imagineIntents({ ... })
+const spotlight = await graphqlSock.imagineSpotlight({ ... })
+await graphqlSock.imagineReport({ ... })
+
+// Bot personas
+const bot = await graphqlSock.aiCreationFetchCreatedBot()
+await graphqlSock.aiCreationUpdatePersona({ ... })
+await graphqlSock.aiCreationDeletePersona()
+await graphqlSock.aiCreationUploadImage()
+
+// Persona management
+const personas = await graphqlSock.aiHomeFetchUserCreatedPersonas()
+const search = await graphqlSock.aiHomeSearch({ ... })
+```
+
+### Events
+
+```ts
+// Event CRUD
+const event = await graphqlSock.createEvent({ ... })
+const fetched = await graphqlSock.getEvent()
+await graphqlSock.updateEvent({ ... })
+await graphqlSock.deleteEvent()
+const events = await graphqlSock.listEvents()
+
+// Event invitations
+await graphqlSock.updateEventRsvp({ ... })
+await graphqlSock.addEventInvitations({ ... })
+await graphqlSock.removeEventInvitations({ ... })
+
+// Event invite links
+const link = await graphqlSock.getOrCreateEventInviteLink()
+const rotated = await graphqlSock.rotateEventInviteLink()
+```
+
+### Payments (Brazil PIX)
+
+```ts
+// PIX enrollment
+const options = await graphqlSock.brGetAuthOptions()
+await graphqlSock.brSaveCpf({ ... })
+const enrollment = await graphqlSock.brCreateEnrollment()
+await graphqlSock.brCompleteEnrollmentRegistration()
+
+// PIX authorization
+await graphqlSock.brAuthorizePayment({ ... })
+
+// PIX transactions
+const banks = await graphqlSock.getPixBankList()
+const merchant = await graphqlSock.getMerchantPixInfo()
+await graphqlSock.completePixTransaction({ ... })
+await graphqlSock.payWithPixPrecheck({ ... })
+
+// Payment keys
+const key = await graphqlSock.genCreatePaymentKey({ ... })
+await graphqlSock.updatePaymentKey({ ... })
+await graphqlSock.deletePaymentKey()
+```
+
+### Payments (UPI India)
+
+```ts
+// UPI info
+const accounts = await graphqlSock.getUpiAccounts()
+const details = await graphqlSock.getUpiLiteDetails()
+const token = await graphqlSock.getUpiToken()
+const purposeKey = await graphqlSock.getUpiPurposeLimitingKey()
+
+// UPI mandates
+await graphqlSock.upiCreateMandate({ ... })
+await graphqlSock.upiAcceptMandate({ ... })
+await graphqlSock.upiRejectMandate({ ... })
+await graphqlSock.upiExecuteMandate({ ... })
+await graphqlSock.upiPauseMandate({ ... })
+await graphqlSock.upiResumeMandate({ ... })
+await graphqlSock.upiRevokeMandate({ ... })
+```
+
+### Wamo Commerce
+
+```ts
+// Subscriptions
+const status = await graphqlSock.wamoSubQueryStatus()
+await graphqlSock.wamoCancelSubscription()
+await graphqlSock.wamoOverrideStatus()
+
+// Promos
+const promo = await graphqlSock.wamoPromoIdQuery()
+await graphqlSock.wamoPromoSet({ ... })
+await graphqlSock.wamoPromoDelete()
+```
+
+### User/Account
+
+```ts
+// Account names
+const fbName = await graphqlSock.facebookAccountName()
+const igName = await graphqlSock.instagramAccountName()
+
+// Registration
+const meta = await graphqlSock.getSignupMetadata()
+await graphqlSock.registerInit({ ... })
+await graphqlSock.registerAllAccounts()
+
+// Device registration
+const registered = await graphqlSock.checkDeviceRegistration()
+```
+
+---
+
+## Interop Groups & Privacy
+
+Interop allows cross-platform messaging with third-party integrators.
+
+```ts
+import { makeWASocket, makeInteropSocket } from '@whiskeysockets/baileys'
+
+const sock = makeWASocket({ auth: state })
+const interopSock = makeInteropSocket(sock)
+
+// Fetch integrators
+const integrators = await interopSock.fetchIntegrators()
+
+// Accept TOS
+await interopSock.acceptInteropTOS()
+
+// Opt in/out
+await interopSock.optInIntegrators()
+await interopSock.optOutIntegrators([12, 13])
+
+// Resolve users
+const user = await interopSock.resolveInteropUser('external-id', 12)
+const users = await interopSock.resolveInteropUsers([
+    { externalId: 'id1', integratorId: 12 },
+    { externalId: 'id2', integratorId: 13 }
+])
+
+// Reachability
+const settings = await interopSock.getReachabilitySettings()
+await interopSock.setReachabilitySettings(users, true)
+
+// Block/Spam
+await interopSock.blockInteropUser('jid')
+await interopSock.unblockInteropUser('jid')
+await interopSock.reportInteropSpam('jid')
+
+// Trust
+await interopSock.trustInteropContact('jid')
+
+// Initialize (full setup sequence)
+await interopSock.initInterop()
+
+// Session reset
+await interopSock.resetInteropSession('jid')
+```
+
+### Interop Groups
+
+```ts
+// Create interop group
+const group = await interopSock.createInteropGroup(['participant1@interop', 'participant2@interop'])
+
+// Leave interop group(s)
+await interopSock.leaveInteropGroup(['group1@g.us', 'group2@g.us'])
+
+// Add participants
+await interopSock.addParticipantsToInteropGroup('group@g.us', ['user@interop'])
+
+// Query group info
+const info = await interopSock.queryInteropGroupInfo('group@g.us')
+```
+
+### Interop Privacy
+
+```ts
+// Update privacy setting
+await interopSock.updateInteropPrivacySetting('LAST_SEEN', 'CONTACTS')
+
+// Update with contact list
+await interopSock.updateInteropPrivacySettingWithContactList(
+    'PROFILE_PHOTO',
+    'CONTACT_BLACKLIST',
+    [{ jid: '123456@s.whatsapp.net' }],
+    'PHONE',
+    'dhash'
+)
+
+// Check group add privacy
+const privacy = await interopSock.getInteropGroupAddPrivacy('jid@interop', 12)
+```
+
+### Constants
+
+```ts
+import { INTEGRATOR_BIRDYCHAT, INTEGRATOR_HAIKET } from '@whiskeysockets/baileys'
+
+console.log(INTEGRATOR_BIRDYCHAT) // 12
+console.log(INTEGRATOR_HAIKET)    // 13
+```
+
+---
+
+## Advanced Message Handling (imup)
+
+The `imup` class provides utilities for handling complex message types.
+
+```ts
+import { makeWASocket, imup } from '@whiskeysockets/baileys'
+
+const sock = makeWASocket({ auth: state })
+
+// The imup instance is attached to the socket as sock.imup
+```
+
+### Detect Message Type
+
+```ts
+const type = sock.imup.detectType(content)
+// Returns: 'PAYMENT', 'PRODUCT', 'ALBUM', 'EVENT', 'POLL_RESULT', 'ORDER', 'GROUP_STATUS', 'GROUP_LABEL', or null
+```
+
+### Handle Payment Message
+
+```ts
+const paymentContent = sock.imup.handlePayment(content, quoted)
+await sock.sendMessage(jid, paymentContent)
+```
+
+### Handle Product Message
+
+```ts
+const productContent = sock.imup.handleProduct({
+    title: 'Product Name',
+    description: 'Product description',
+    thumbnail: thumbnailBuffer,
+    productId: 'product-id',
+    retailerId: 'retailer-id',
+    url: 'https://example.com',
+    body: 'Product body',
+    footer: 'Product footer',
+    buttons: [],
+    priceAmount1000: 100000,
+    currencyCode: 'IDR'
+}, jid, quoted)
+await sock.sendMessage(jid, productContent)
+```
+
+### Handle Album Message
+
+```ts
+const albumContent = sock.imup.handleAlbum([
+    { image: thumbnailBuffer },
+    { video: videoBuffer, caption: 'Video caption' }
+], jid, quoted)
+// Sends album with parent + child messages
+```
+
+### Handle Event Message
+
+```ts
+const eventContent = sock.imup.handleEvent({
+    name: 'Event Name',
+    description: 'Event description',
+    startTime: Date.now(),
+    endTime: Date.now() + 3600000,
+    location: { name: 'Location', degreesLatitude: 0, degreesLongitude: 0 }
+}, jid, quoted)
+await sock.sendMessage(jid, eventContent)
+```
+
+### Handle Poll Result
+
+```ts
+const pollResult = sock.imup.handlePollResult({
+    name: 'Poll Name',
+    pollVotes: [
+        { optionName: 'Option 1', optionVoteCount: 5 },
+        { optionName: 'Option 2', optionVoteCount: 3 }
+    ],
+    newsletter: {
+        newsletterName: 'Newsletter Name',
+        newsletterJid: '120363xxxx@newsletter'
+    }
+}, jid, quoted)
+await sock.sendMessage(jid, pollResult)
+```
+
+### Handle Order Message
+
+```ts
+const orderContent = sock.imup.handleOrderMessage({
+    orderTitle: 'Order Title',
+    message: 'Order message',
+    itemCount: 1,
+    totalAmount1000: 50000,
+    totalCurrencyCode: 'IDR',
+    thumbnail: thumbnailBuffer
+}, jid, quoted)
+await sock.sendMessage(jid, orderContent)
+```
+
+### Handle Group Story
+
+```ts
+const storyContent = sock.imup.handleGroupStory({
+    message: 'Story message'
+}, jid, quoted)
+```
+
+### Handle Group Label
+
+```ts
+const labelContent = sock.imup.handleGbLabel({
+    labelText: 'Label text'
+}, 'group@g.us')
+```
+
 ## Change Profile
 
 ### Change Profile Status
@@ -986,6 +1769,243 @@ await sock.updateProfilePicture(jid, { url: './new-profile-picture.jpeg' })
 ### Remove display picture (groups too)
 ```ts
 await sock.removeProfilePicture(jid)
+```
+
+## Newsletter Management
+
+Manage WhatsApp Newsletter channels — create, update, follow, post, and more.
+
+### Create Newsletter
+```ts
+const newsletter = await sock.newsletterCreate('My Newsletter', 'Description')
+console.log(newsletter.id, newsletter.name)
+```
+
+### Create Verified Newsletter
+```ts
+const verified = await sock.newsletterCreateVerified('My Verified Newsletter', 'Description')
+```
+
+### Get Newsletter Metadata
+```ts
+const metadata = await sock.newsletterMetadata('JID', 'newsletter@g.us')
+// or with role
+const metadata = await sock.newsletterMetadata('JID', 'newsletter@g.us', 'ADMIN')
+```
+
+### Follow/Unfollow/Leave Newsletter
+```ts
+await sock.newsletterFollow('newsletter@g.us')
+await sock.newsletterUnfollow('newsletter@g.us')
+await sock.newsletterLeave('newsletter@g.us')
+```
+
+### Mute/Unmute Newsletter
+```ts
+await sock.newsletterMute('newsletter@g.us')
+await sock.newsletterUnmute('newsletter@g.us')
+```
+
+### Send Post to Newsletter
+```ts
+// Text post
+await sock.newsletterSendPost('newsletter@g.us', { text: 'Hello from newsletter!' })
+
+// Image post
+await sock.newsletterSendPost('newsletter@g.us', {
+    image: { url: './image.png' },
+    caption: 'Check this out!'
+})
+
+// Video post
+await sock.newsletterSendPost('newsletter@g.us', {
+    video: { url: './video.mp4' },
+    caption: 'Video post'
+})
+
+// Reply to a message
+await sock.newsletterSendPost('newsletter@g.us', {
+    text: 'This is a reply'
+}, { quoted: message })
+```
+
+### Send Post via IQ (Alternative)
+```ts
+await sock.newsletterSendPostIQ('newsletter@g.us', [{ tag: 'text', attrs: {}, content: 'Hello!' }])
+```
+
+### Send Message (Generic)
+```ts
+const msg = await sock.newsletterSendMessage('newsletter@g.us', { text: 'Hello!' })
+// With options
+const msg = await sock.newsletterSendMessage('newsletter@g.us', {
+    image: { url: './image.png' },
+    caption: 'Image'
+}, { quoted: message })
+```
+
+### Delete/Edit/Forward Newsletter Message
+```ts
+await sock.newsletterDeleteMessage('newsletter@g.us', message.key)
+await sock.newsletterEditMessage('newsletter@g.us', message.key, { text: 'Updated text' })
+await sock.newsletterForwardMessage('newsletter@g.us', originalMessage)
+```
+
+### Pin/Unpin Newsletter Message
+```ts
+// Via sendMessage
+await sock.newsletterPinMessage('newsletter@g.us', message.key, 86400)
+await sock.newsletterUnpinMessage('newsletter@g.us', message.key)
+
+// Via IQ (server_id based)
+await sock.newsletterPinMessageIQ('newsletter@g.us', serverId, 86400)
+await sock.newsletterUnpinMessageIQ('newsletter@g.us', serverId)
+```
+
+### Star/Unstar Newsletter Message
+```ts
+await sock.newsletterStarMessage('newsletter@g.us', message.key, true)
+await sock.newsletterStarMessage('newsletter@g.us', message.key, false)
+```
+
+### Mark Newsletter Message as Read/Unread
+```ts
+await sock.newsletterMarkAsRead('newsletter@g.us', message.key)
+await sock.newsletterMarkAsUnread('newsletter@g.us', message.key)
+```
+
+### Send View Receipt
+```ts
+await sock.newsletterSendViewReceipt('newsletter@g.us', serverMessageIds)
+```
+
+### Update Newsletter
+```ts
+await sock.newsletterUpdateName('newsletter@g.us', 'New Name')
+await sock.newsletterUpdateDescription('newsletter@g.us', 'New Description')
+await sock.newsletterUpdatePicture('newsletter@g.us', imageBuffer)
+await sock.newsletterRemovePicture('newsletter@g.us')
+await sock.newsletterUpdateCategory('newsletter@g.us', 'news')
+await sock.newsletterUpdateSettings('newsletter@g.us', { reaction_codes: { value: 'ENABLED' } })
+await sock.newsletterUpdateVerification('newsletter@g.us', 'verified')
+await sock.newsletterUpdateUserSetting('newsletter@g.us', { muted: true })
+```
+
+### React to Newsletter Message
+```ts
+await sock.newsletterReactMessage('newsletter@g.us', 'server_id', '👍')
+await sock.newsletterReactMessage('newsletter@g.us', 'server_id', null) // remove
+```
+
+### Fetch Newsletter Messages/Updates
+```ts
+const messages = await sock.newsletterFetchMessages('newsletter@g.us', 50)
+const updates = await sock.newsletterFetchUpdates('newsletter@g.us', 20)
+```
+
+### Subscribe to Live Updates
+```ts
+const result = await sock.subscribeNewsletterUpdates('newsletter@g.us')
+console.log(result?.duration)
+```
+
+### Fetch All Subscribed Newsletters
+```ts
+const subscribed = await sock.newsletterFetchAllSubscribe()
+```
+
+### Newsletter Admin Operations
+```ts
+const count = await sock.newsletterAdminCount('newsletter@g.us')
+await sock.newsletterChangeOwner('newsletter@g.us', 'newowner@s.whatsapp.net')
+await sock.newsletterDemote('newsletter@g.us', 'user@s.whatsapp.net')
+await sock.newsletterPromoteAdmin('newsletter@g.us', 'user@s.whatsapp.net')
+await sock.newsletterDelete('newsletter@g.us')
+```
+
+### Newsletter Admin Metadata & Profile
+```ts
+const adminMeta = await sock.newsletterAdminMetadata('newsletter@g.us', {
+    fetchPendingAdmins: true,
+    fetchAdminCount: true,
+    fetchCapabilities: false,
+    fetchAdminProfile: false,
+    includeAdminSettings: false,
+    includeJarvisConfig: false
+})
+await sock.newsletterAdminProfileUpdate('newsletter@g.us', { profile: 'updates' })
+```
+
+### Newsletter Admin Invites
+```ts
+await sock.newsletterInviteAdmin('newsletter@g.us', 'user@s.whatsapp.net')
+await sock.newsletterRevokeAdminInvite('newsletter@g.us', 'user@s.whatsapp.net')
+await sock.newsletterAcceptAdminInvite('newsletter@g.us')
+```
+
+### Newsletter Reaction Mode
+```ts
+await sock.newsletterReactionMode('newsletter@g.us', 'on')   // ENABLED
+await sock.newsletterReactionMode('newsletter@g.us', true)   // ENABLED
+await sock.newsletterReactionMode('newsletter@g.us', 'off')  // DISABLED
+await sock.newsletterReactionMode('newsletter@g.us', false)  // DISABLED
+```
+
+### Newsletter Statistics & Insights
+```ts
+const stats = await sock.newsletterViewStats('newsletter@g.us', serverId)
+const insights = await sock.newsletterInsights('newsletter@g.us', '30d')
+```
+
+### Newsletter Directory & Search
+```ts
+const list = await sock.newsletterDirectoryList({ limit: 20, sortField: 'SUBSCRIBER_COUNT' })
+const search = await sock.newsletterDirectorySearch('news', { limit: 20 })
+const preview = await sock.newsletterDirectoryCategoryPreview(5)
+const results = await sock.newsletterSearch('tech', 20)
+const recommended = await sock.newsletterRecommended(10)
+const similar = await sock.newsletterSimilar('newsletter@g.us', 10)
+const following = await sock.newsletterFollowingList()
+```
+
+### Newsletter Poll & Reactions
+```ts
+const voters = await sock.newsletterPollVoterList('newsletter@g.us', serverId, 'Option 1')
+const senders = await sock.newsletterReactionSenders('newsletter@g.us', serverId)
+```
+
+### Newsletter Block & Report
+```ts
+await sock.newsletterBlockUser('newsletter@g.us', 'user@s.whatsapp.net')
+const reports = await sock.newsletterUserReports('newsletter@g.us')
+await sock.newsletterCreateReportAppeal('newsletter@g.us', 'reason')
+await sock.newsletterLabelPaidPartnership('newsletter@g.us', serverId, true)
+```
+
+### Newsletter Enforcement & Verification
+```ts
+const enforcements = await sock.newsletterEnforcements('newsletter@g.us')
+const preview = await sock.newsletterLinkPreviewCheck('https://example.com')
+```
+
+### Newsletter Analytics
+```ts
+await sock.newsletterLogExposures(events)
+const features = await sock.newsletterRankingFeatures('newsletter@g.us')
+```
+
+### Newsletter Wamo (Paid Subscription)
+```ts
+await sock.newsletterEnableWamo('newsletter@g.us')
+await sock.newsletterDisableWamo('newsletter@g.us')
+await sock.newsletterChangeWamo('newsletter@g.us', { tier: 'premium' })
+const ageCollection = await sock.wamoAfsAgeCollection('newsletter@g.us')
+const assets = await sock.wamoAssetCollection('newsletter@g.us')
+const notice = await sock.wamoFetchAdhocNotice('notice-id')
+const token = await sock.wamoFetchIdentityToken('newsletter@g.us')
+const compliance = await sock.wamoSubComplianceInfo('newsletter@g.us')
+const version = await sock.wamoUserIdVersion('newsletter@g.us')
+await sock.wamoSetUserIdVersion('newsletter@g.us', 2)
 ```
 
 ## Groups
@@ -1275,7 +2295,7 @@ sock.ws.on('CB:edge_routing,id:abcd,routing_info', (node: BinaryNode) => { })
 ```
 
 # License
-Copyright (c) 2025 alwayscodex
+Copyright (c) 2025 Rajeh Taher/WhiskeySockets
 
 Licensed under the MIT License:
 Permission is hereby granted, free of charge, to any person obtaining a copy
